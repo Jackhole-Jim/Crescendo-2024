@@ -40,18 +40,18 @@ private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstant
     // This method will be called once per scheduler run
   }
 
-  private void SetIntakeSpeed (double speed){
-    intakeUpper.set(speed);
-    intakeLower.set(speed);
-  }
+  // private void SetIntakeSpeed (double speed){
+  //   intakeUpper.set(speed);
+  //   intakeLower.set(speed);
+  // }
 
-  public void SetIntakeSpeed(int metersPerSecond)
+  public void SetIntakeSpeed(double metersPerSecond)
   {
     intakeUpper.getPIDController().setReference(metersPerSecond, CANSparkMax.ControlType.kVelocity);
     intakeLower.getPIDController().setReference(metersPerSecond, CANSparkMax.ControlType.kVelocity);
   }
   
-  public Command SetIntakeSpeedCommand(int metersPerSecond)
+  public Command SetIntakeSpeedCommand(double metersPerSecond)
   {
     return runOnce(() -> {
       this.SetIntakeSpeed(metersPerSecond);

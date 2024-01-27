@@ -42,6 +42,8 @@ public final class Constants
 
   public static class OperatorConstants
   {
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
 
     // Joystick Deadband
     public static final double LEFT_X_DEADBAND  = 0.01;
@@ -59,11 +61,17 @@ public final class Constants
 
     public static final double VELOCITY_CONVERSION_TOP = (1/60.0) * (1/TOP_GEAR_RATIO) * (4 * Math.PI) * (1/39.3701);
     public static final double VELOCITY_CONVERSION_BOTTOM = (1/60.0) * (1/BOTTOM_GEAR_RATIO) * (4 * Math.PI) * (1/39.3701);
+
+    public static final double SHOOTING_SPEED = 0.5;
   }
 
   public static class ShooterConstants {
     public static final int SHOOTER_MOTOR_ID = 16;
     public static final int INDEX_MOTOR_ID = 15;
     public static final double INDEX_RAMP_RATE = 0.25;
+    public static final double SHOOTER_GEARBOX_RATIO = 1.33;
+    public static final double SHOOTER_SETPOINT_TOLERANCE = 100.0;
+
+    public static final int SHOOTER_SHOOTING_SPEED_RPM = 7000;
   }
 }
