@@ -49,4 +49,21 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.01;
     public static final double TURN_CONSTANT    = 6;
   }
+
+  public static class IntakeConstants {
+    public static final int TOP_MOTOR_ID = 14;
+    public static final int BOTTOM_MOTOR_ID = 13;
+
+    public static final double TOP_GEAR_RATIO = 2.89;
+    public static final double BOTTOM_GEAR_RATIO = 1.33;
+
+    public static final double VELOCITY_CONVERSION_TOP = (1/60.0) * (1/TOP_GEAR_RATIO) * (4 * Math.PI) * (1/39.3701);
+    public static final double VELOCITY_CONVERSION_BOTTOM = (1/60.0) * (1/BOTTOM_GEAR_RATIO) * (4 * Math.PI) * (1/39.3701);
+  }
+
+  public static class ShooterConstants {
+    public static final int SHOOTER_MOTOR_ID = 16;
+    public static final int INDEX_MOTOR_ID = 15;
+    public static final double INDEX_RAMP_RATE = 0.25;
+  }
 }

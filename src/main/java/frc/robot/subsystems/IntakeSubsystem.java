@@ -8,22 +8,31 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
-private final CANSparkMax Intakeupper = new CANSparkMax(14,MotorType.kBrushless);
-private final CANSparkMax Intakelower = new CANSparkMax(13,MotorType.kBrushless);
+private final CANSparkMax intakeUpper = new CANSparkMax(Constants.IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-
-    Intakeupper.restoreFactoryDefaults();
-    Intakeupper.getPIDController().setP(0);
-    Intakeupper.getPIDController().setI(0);
-    Intakeupper.getPIDController().setD(0);
-    Intakeupper.getPIDController().setFF(0);
-    Intakeupper.setIdleMode(IdleMode.kBrake);
-    Intakelower.setIdleMode(IdleMode.kBrake);
-    Intakeupper.setInverted(true);
+    intakeUpper.restoreFactoryDefaults();
+    intakeUpper.getPIDController().setP(0);
+    intakeUpper.getPIDController().setI(0);
+    intakeUpper.getPIDController().setD(0);
+    intakeUpper.getPIDController().setFF(0);
+    intakeUpper.setIdleMode(IdleMode.kBrake);
+    intakeUpper.setInverted(true);
+    intakeUpper.getEncoder().setVelocityConversionFactor(Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
+    
+    intakeLower.restoreFactoryDefaults();
+    intakeLower.getPIDController().setP(0);
+    intakeLower.getPIDController().setI(0);
+    intakeLower.getPIDController().setD(0);
+    intakeLower.getPIDController().setFF(0);
+    intakeLower.setIdleMode(IdleMode.kBrake);
+    intakeLower.getEncoder().setVelocityConversionFactor(Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
   }
 
   @Override
@@ -32,7 +41,32 @@ private final CANSparkMax Intakelower = new CANSparkMax(13,MotorType.kBrushless)
   }
 
   private void SetIntakeSpeed (double speed){
-    Intakeupper.set(speed);
-    Intakelower.set(speed);
+    intakeUpper.set(speed);
+    intakeLower.set(speed);
+  }
+
+  public void SetIntakeSpeed(int metersPerSecond)
+  {
+    intakeUpper.getPIDController().setReference(metersPerSecond, CANSparkMax.ControlType.kVelocity);
+    intakeLower.getPIDController().setReference(metersPerSecond, CANSparkMax.ControlType.kVelocity);
+  }
+  
+  public Command SetIntakeSpeedCommand(int metersPerSecond)
+  {
+    return runOnce(() -> {
+      this.SetIntakeSpeed(metersPerSecond);
+    });
+  }
+
+  public void StopIntake()
+  {
+    intakeUpper.getPIDController().setReference(0, CANSparkMax.ControlType.kVoltage);
+    intakeLower.getPIDController().setReference(0, CANSparkMax.ControlType.kVoltage);
+  }
+
+  public Command StopIntakeCommand(){
+    return runOnce(() -> {
+      this.StopIntake();
+    });
   }
 }
