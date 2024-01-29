@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -49,6 +51,13 @@ private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstant
   {
     intakeUpper.getPIDController().setReference(metersPerSecond, CANSparkMax.ControlType.kVelocity);
     intakeLower.getPIDController().setReference(metersPerSecond, CANSparkMax.ControlType.kVelocity);
+  }
+  
+  public Command SetIntakeSpeedCommand(DoubleSupplier metersPerSecondSupplier)
+  {
+    return run(() -> {
+      this.SetIntakeSpeed(metersPerSecondSupplier.getAsDouble());
+    });
   }
   
   public Command SetIntakeSpeedCommand(double metersPerSecond)

@@ -60,9 +60,11 @@ public final class Constants
     public static final double BOTTOM_GEAR_RATIO = 1.33;
 
     public static final double VELOCITY_CONVERSION_TOP = (1/60.0) * (1/TOP_GEAR_RATIO) * (4 * Math.PI) * (1/39.3701);
-    public static final double VELOCITY_CONVERSION_BOTTOM = (1/60.0) * (1/BOTTOM_GEAR_RATIO) * (4 * Math.PI) * (1/39.3701);
+    public static final double VELOCITY_CONVERSION_BOTTOM = (1/60.0) * (1/BOTTOM_GEAR_RATIO) * (2 * Math.PI) * (1/39.3701);
 
     public static final double SHOOTING_SPEED = 0.5;
+
+    public static final double MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND = 0.25;
   }
 
   public static class ShooterConstants {
