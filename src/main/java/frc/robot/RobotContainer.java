@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -121,11 +122,15 @@ public class RobotContainer
     //                           ));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
 
+
     m_driverController.y().onTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem));
     m_driverController
       .a()
       .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 2))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
       .onFalse(intakeSubsystem.StopIntakeCommand());
+
+    SmartDashboard.putNumber("IntakeSpeed", 0);
+    m_driverController.b().onTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> SmartDashboard.getNumber("IntakeSpeed", 0)));
   }
 
   /**
