@@ -24,6 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotor.getPIDController().setFF(0);
     shooterMotor.getPIDController().setSmartMotionAllowedClosedLoopError(100, 0);
 
+    indexMotor.setInverted (true);
     indexMotor.setOpenLoopRampRate(Constants.ShooterConstants.INDEX_RAMP_RATE);
   }
 
