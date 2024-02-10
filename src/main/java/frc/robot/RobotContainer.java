@@ -126,7 +126,7 @@ public class RobotContainer
     m_driverController.y().onTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem));
     m_driverController
       .leftBumper()
-      .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 2))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
+      .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, -drivebase.getRobotVelocity().vxMetersPerSecond) * 2))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
       .onFalse(intakeSubsystem.StopIntakeCommand());
 
     SmartDashboard.putNumber("IntakeSpeed", 0);

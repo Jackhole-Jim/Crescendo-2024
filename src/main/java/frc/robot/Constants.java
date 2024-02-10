@@ -65,7 +65,7 @@ public final class Constants
     public static final double UPPER_FF = 0.0001704174943016842;
     public static final double LOWER_FF = 0.0001934174943016842;
 
-    public static final double SHOOTING_SPEED = 0.5;
+    public static final double SHOOTING_SPEED = 1.0;
 
     public static final double MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND = 1.0;
   }
@@ -76,7 +76,11 @@ public final class Constants
     public static final double INDEX_RAMP_RATE = 0.25;
     public static final double SHOOTER_GEARBOX_RATIO = 1.33;
     public static final double SHOOTER_SETPOINT_TOLERANCE = 100.0;
+    
+    public static final double SHOOTER_P = 0.00005;
+    public static final double SHOOTER_D = 0.005;
+    public static final double SHOOTER_FF = 0.00022101750073488802;
 
-    public static final int SHOOTER_SHOOTING_SPEED_RPM = 7000;
+    public static final int SHOOTER_SHOOTING_SPEED_RPM = 4000;
   }
 }

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -22,7 +23,7 @@ public class ShootNoteCommand extends SequentialCommandGroup {
     addCommands(new WaitUntilCommand(()-> shooterSubsystem.IsAtSetpoint()));
     addCommands(shooterSubsystem.StartIndexMotor());
     addCommands(intakeSubsystem.SetIntakeSpeedCommand(Constants.IntakeConstants.SHOOTING_SPEED));
-    addCommands(new WaitUntilCommand(2));
+    addCommands(new WaitCommand(2));
     addCommands(shooterSubsystem.StopShooter());
     addCommands(shooterSubsystem.StopIndexMotor());
     addCommands(intakeSubsystem.StopIntakeCommand());

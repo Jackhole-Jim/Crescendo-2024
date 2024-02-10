@@ -19,15 +19,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterSubsystem() {
     shooterMotor.restoreFactoryDefaults();
-    shooterMotor.getPIDController().setP(0);
+    shooterMotor.getPIDController().setP(Constants.ShooterConstants.SHOOTER_P);
     shooterMotor.getPIDController().setI(0);
-    shooterMotor.getPIDController().setD(0);
-    shooterMotor.getPIDController().setFF(0);
+    shooterMotor.getPIDController().setD(Constants.ShooterConstants.SHOOTER_D);
+    shooterMotor.getPIDController().setFF(Constants.ShooterConstants.SHOOTER_FF);
     shooterMotor.getPIDController().setSmartMotionAllowedClosedLoopError(100, 0);
     shooterMotor.getEncoder().setVelocityConversionFactor(Constants.ShooterConstants.SHOOTER_GEARBOX_RATIO);
+    shooterMotor.burnFlash();
 
+    indexMotor.restoreFactoryDefaults();
     indexMotor.setInverted (true);
     indexMotor.setOpenLoopRampRate(Constants.ShooterConstants.INDEX_RAMP_RATE);
+    indexMotor.burnFlash();
   }
 
   @Override
