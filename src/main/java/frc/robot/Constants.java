@@ -68,6 +68,10 @@ public final class Constants
     public static final double SHOOTING_SPEED = 1.0;
 
     public static final double MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND = 1.0;
+
+    public static final int NOTE_BEAM_BREAK_CHANNEL = 0;
+
+    public static final double NOTE_BEAM_BREAK_VOLTAGE_THRESHOLD = 1.0;
   }
 
   public static class ShooterConstants {

@@ -13,6 +13,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,6 +23,8 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
 private final CANSparkMax intakeUpper = new CANSparkMax(Constants.IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
 private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
+
+private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConstants.NOTE_BEAM_BREAK_CHANNEL);
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     CANSparkBase.enableExternalUSBControl(true);
@@ -43,13 +47,18 @@ private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstant
     // intakeLower.getPIDController().setSmartMotionMaxVelocity(5500, 0);
     intakeLower.setIdleMode(IdleMode.kBrake);
     intakeLower.burnFlash();
+
+    noteBeamBreak.setAverageBits(24);
+    AnalogInput.setGlobalSampleRate(2000);
   }
 
   @Override
   public void periodic() {
     Logger.recordOutput("Intake/UpperSpeed", intakeUpper.getEncoder().getVelocity() / Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
     Logger.recordOutput("Intake/LowerSpeed", intakeLower.getEncoder().getVelocity() / Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
-    SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));
+    Logger.recordOutput("IsNotePresent", IsNotePresent());
+    Logger.recordOutput("NoteBeamBreakValue", noteBeamBreak.getAverageValue());
+    // SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));
     // This method will be called once per scheduler run
   }
 
@@ -89,5 +98,10 @@ private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstant
     return runOnce(() -> {
       this.StopIntake();
     });
+  }
+
+  public boolean IsNotePresent()
+  {
+    return noteBeamBreak.getAverageVoltage() < Constants.IntakeConstants.NOTE_BEAM_BREAK_VOLTAGE_THRESHOLD;//beam break is active low
   }
 }

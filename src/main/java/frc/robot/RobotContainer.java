@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AmpWhipperSubsystem;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -42,6 +43,8 @@ public class RobotContainer
   private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+
+  private final AmpWhipperSubsystem ampWhipperSubsystem = new AmpWhipperSubsystem();
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // CommandJoystick driverController = new CommandJoystick(1);
@@ -122,10 +125,12 @@ public class RobotContainer
     //                           ));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
 
-
-    m_driverController.y().onTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem));
+    m_driverController.y().onTrue(ampWhipperSubsystem.extendActuators());
+    m_driverController.a().onTrue(ampWhipperSubsystem.retractActuators());
+    m_driverController.rightBumper().onTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem));
     m_driverController
       .leftBumper()
+      .and(() -> !intakeSubsystem.IsNotePresent())
       .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, -drivebase.getRobotVelocity().vxMetersPerSecond) * 2))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
       .onFalse(intakeSubsystem.StopIntakeCommand());
 
