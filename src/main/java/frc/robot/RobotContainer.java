@@ -125,9 +125,20 @@ public class RobotContainer
     //                           ));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
 
+    intakeSubsystem.setDefaultCommand(intakeSubsystem.SetIntakeSpeedCommand(
+      () -> m_operatorController.getLeftTriggerAxis() - m_operatorController.getRightTriggerAxis()
+    ));
+
     m_driverController.y().onTrue(ampWhipperSubsystem.extendActuators());
     m_driverController.a().onTrue(ampWhipperSubsystem.retractActuators());
-    m_driverController.rightBumper().onTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem));
+    m_driverController
+      .rightBumper()
+      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem))
+      .onFalse(
+        shooterSubsystem.StopShooter()
+        .andThen(shooterSubsystem.StopIndexMotor())
+        .andThen(intakeSubsystem.StopIntakeCommand())
+      );
     m_driverController
       .leftBumper()
       .and(() -> !intakeSubsystem.IsNotePresent())

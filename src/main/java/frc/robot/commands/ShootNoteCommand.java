@@ -23,7 +23,7 @@ public class ShootNoteCommand extends SequentialCommandGroup {
     addCommands(new WaitUntilCommand(()-> shooterSubsystem.IsAtSetpoint()));
     addCommands(shooterSubsystem.StartIndexMotor());
     addCommands(intakeSubsystem.SetIntakeSpeedCommand(Constants.IntakeConstants.SHOOTING_SPEED));
-    addCommands(new WaitCommand(2));
+    addCommands(new WaitCommand(2).raceWith(new WaitUntilCommand(() -> !intakeSubsystem.IsNotePresent())));
     addCommands(shooterSubsystem.StopShooter());
     addCommands(shooterSubsystem.StopIndexMotor());
     addCommands(intakeSubsystem.StopIntakeCommand());

@@ -57,7 +57,7 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     Logger.recordOutput("Intake/UpperSpeed", intakeUpper.getEncoder().getVelocity() / Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
     Logger.recordOutput("Intake/LowerSpeed", intakeLower.getEncoder().getVelocity() / Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
     Logger.recordOutput("IsNotePresent", IsNotePresent());
-    Logger.recordOutput("NoteBeamBreakValue", noteBeamBreak.getAverageValue());
+    Logger.recordOutput("NoteBeamBreakValue", noteBeamBreak.getAverageVoltage());
     // SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));
     // This method will be called once per scheduler run
   }
