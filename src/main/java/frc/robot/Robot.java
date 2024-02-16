@@ -15,6 +15,7 @@ import java.io.IOException;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import swervelib.parser.SwerveParser;
 
@@ -50,6 +51,7 @@ public class Robot extends LoggedRobot
   public void robotInit()
   {
     Logger.addDataReceiver(new NT4Publisher()); 
+    Logger.addDataReceiver(new WPILOGWriter());
     Logger.start();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
