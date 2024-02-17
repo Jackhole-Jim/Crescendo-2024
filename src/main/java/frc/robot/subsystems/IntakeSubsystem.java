@@ -49,7 +49,7 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     intakeLower.burnFlash();
 
     noteBeamBreak.setAverageBits(24);
-    AnalogInput.setGlobalSampleRate(2000);
+    AnalogInput.setGlobalSampleRate(1500);
   }
 
   @Override
@@ -90,6 +90,7 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
 
   public void StopIntake()
   {
+    Logger.recordOutput("Intake/Setpoint", 0);
     intakeUpper.getPIDController().setReference(0, CANSparkMax.ControlType.kVoltage);
     intakeLower.getPIDController().setReference(0, CANSparkMax.ControlType.kVoltage);
   }

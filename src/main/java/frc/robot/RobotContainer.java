@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AmpWhipperSubsystem;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
+import frc.robot.subsystems.AmpWhipperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -128,12 +128,24 @@ public class RobotContainer
     intakeSubsystem.setDefaultCommand(intakeSubsystem.SetIntakeSpeedCommand(
       () -> m_operatorController.getLeftTriggerAxis() - m_operatorController.getRightTriggerAxis()
     ));
+    ampWhipperSubsystem.setDefaultCommand(ampWhipperSubsystem.setWhipperSpeed(
+      () -> -MathUtil.applyDeadband(m_operatorController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) 
+    ));
 
-    m_driverController.y().onTrue(ampWhipperSubsystem.extendActuators());
-    m_driverController.a().onTrue(ampWhipperSubsystem.retractActuators());
+
+    m_operatorController.y().onTrue(ampWhipperSubsystem.extendActuators());
+    m_operatorController.a().onTrue(ampWhipperSubsystem.retractActuators());
     m_driverController
       .rightBumper()
-      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem))
+      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM))
+      .onFalse(
+        shooterSubsystem.StopShooter()
+        .andThen(shooterSubsystem.StopIndexMotor())
+        .andThen(intakeSubsystem.StopIntakeCommand())
+      );
+    m_operatorController
+      .rightBumper()
+      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM))
       .onFalse(
         shooterSubsystem.StopShooter()
         .andThen(shooterSubsystem.StopIndexMotor())
@@ -142,7 +154,7 @@ public class RobotContainer
     m_driverController
       .leftBumper()
       .and(() -> !intakeSubsystem.IsNotePresent())
-      .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, -drivebase.getRobotVelocity().vxMetersPerSecond) * 2))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
+      .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
       .onFalse(intakeSubsystem.StopIntakeCommand());
 
     SmartDashboard.putNumber("IntakeSpeed", 0);

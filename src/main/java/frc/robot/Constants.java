@@ -47,7 +47,7 @@ public final class Constants
 
     // Joystick Deadband
     public static final double LEFT_X_DEADBAND  = 0.01;
-    public static final double LEFT_Y_DEADBAND  = 0.01;
+    public static final double LEFT_Y_DEADBAND  = 0.05;
     public static final double RIGHT_X_DEADBAND = 0.01;
     public static final double TURN_CONSTANT    = 6;
   }
@@ -67,7 +67,7 @@ public final class Constants
 
     public static final double SHOOTING_SPEED = 1.75;
 
-    public static final double MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND = 1.0;
+    public static final double MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND = 1.5;
 
     public static final int NOTE_BEAM_BREAK_CHANNEL = 0;
 
@@ -85,6 +85,13 @@ public final class Constants
     public static final double SHOOTER_D = 0.005;
     public static final double SHOOTER_FF = 0.00022101750073488802;
 
-    public static final int SHOOTER_SHOOTING_SPEED_RPM = 4000;
+    public static final int SPEAKER_SHOOTING_SPEED_RPM = 4500;
+    public static final int AMP_SHOOTING_SPEED_RPM = 800;
+  }
+
+  public static class WhipperConstants {
+    public static final int WHIPPER_MOTOR_ID = 17;
+    public static final int LINEAR_ACTUATOR_LEFT = 0;
+    public static final int LINEAR_ACTUATOR_RIGHT = 1;
   }
 }

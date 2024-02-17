@@ -2,18 +2,29 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.subsystems;
+
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.DoubleSupplier;
+
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class AmpWhipperSubsystem extends SubsystemBase {
 
-  private final PWM linearActuatorLeft = new PWM(0);
-  private final PWM linearActuatorRight = new PWM(1);
+  private final PWM linearActuatorLeft = new PWM(Constants.WhipperConstants.LINEAR_ACTUATOR_LEFT);
+  private final PWM linearActuatorRight = new PWM(Constants.WhipperConstants.LINEAR_ACTUATOR_RIGHT);
+  private final CANSparkMax whipperMotor = new CANSparkMax(Constants.WhipperConstants.WHIPPER_MOTOR_ID, MotorType.kBrushless);
 
   /** Creates a new AmpWhipperSubsystem. */
   public AmpWhipperSubsystem() {
@@ -37,6 +48,11 @@ public class AmpWhipperSubsystem extends SubsystemBase {
     return runOnce(() -> {
       linearActuatorLeft.setSpeed(-1);
       linearActuatorRight.setSpeed(-1);
+    });
+  }
+  public Command setWhipperSpeed(DoubleSupplier Double_Supplier){
+    return run(() -> {
+      whipperMotor.set(Double_Supplier.getAsDouble());
     });
   }
 }

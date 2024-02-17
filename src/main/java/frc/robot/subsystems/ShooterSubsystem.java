@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -36,6 +38,11 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    Logger.recordOutput("Shooter/RPM", shooterMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Shooter/Setpoint", shooterSetpoint);
+    Logger.recordOutput("Shooter/IndexMotorSpeed", indexMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Shooter/IndexMotorSet", indexMotor.get());
+    Logger.recordOutput("Shooter/IsAtSetpoint", IsAtSetpoint());
   } 
 
   public Command StartIndexMotor(){
