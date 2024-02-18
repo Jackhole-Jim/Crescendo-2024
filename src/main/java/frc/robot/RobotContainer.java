@@ -28,6 +28,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
+import org.opencv.core.Mat;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
@@ -92,9 +94,9 @@ public class RobotContainer
     // left stick controls translation
     // right stick controls the angular velocity of the robot
     Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> -m_driverController.getRightX());
+        () -> scaleJoystick(MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
+        () -> scaleJoystick(MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
+        () -> scaleJoystick(-m_driverController.getRightX(), 2));
 
     Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
         () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -161,6 +163,11 @@ public class RobotContainer
     m_driverController.b().onTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> SmartDashboard.getNumber("IntakeSpeed", 0)));
   }
 
+  public static double scaleJoystick(double value, double power)
+  {
+    return value >= 0 ? Math.abs(Math.pow(value, power)) : -Math.abs(Math.pow(value, power));
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -169,7 +176,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Path", true);
+    return new InstantCommand();// drivebase.getAutonomousCommand("New Path", true);
   }
 
   public void setDriveMode()

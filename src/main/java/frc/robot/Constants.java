@@ -85,7 +85,7 @@ public final class Constants
     public static final double SHOOTER_D = 0.005;
     public static final double SHOOTER_FF = 0.00022101750073488802;
 
-    public static final int SPEAKER_SHOOTING_SPEED_RPM = 4500;
+    public static final int SPEAKER_SHOOTING_SPEED_RPM = 6000;
     public static final int AMP_SHOOTING_SPEED_RPM = 800;
   }
 
