@@ -23,6 +23,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.AmpWhipperSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -53,6 +54,8 @@ public class RobotContainer
 
   // // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   // XboxController driverXbox = new XboxController(0);
+
+  private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
@@ -132,6 +135,10 @@ public class RobotContainer
     ));
     ampWhipperSubsystem.setDefaultCommand(ampWhipperSubsystem.setWhipperSpeed(
       () -> -MathUtil.applyDeadband(m_operatorController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) 
+    ));
+
+     climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
+      () -> m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()
     ));
 
 

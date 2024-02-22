@@ -94,4 +94,9 @@ public final class Constants
     public static final int LINEAR_ACTUATOR_LEFT = 0;
     public static final int LINEAR_ACTUATOR_RIGHT = 1;
   }
+  
+  public static class climberConstants {
+    public static final int CLIMBER_MOTOR_ID = 18;
+  }
+
 }
