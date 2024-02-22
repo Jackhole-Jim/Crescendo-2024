@@ -10,25 +10,37 @@ import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
-  private final CANSparkMax climberMotor = new CANSparkMax(Constants.climberConstants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
+  private final CANSparkMax climberMotor = new CANSparkMax(Constants.ClimberConstants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
   /** Creates a new ClimberSubsystem. */
-  public ClimberSubsystem() {}
+  public ClimberSubsystem() {
+    climberMotor.restoreFactoryDefaults();
+    climberMotor.setInverted(true);
+    climberMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
+    climberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    climberMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ClimberConstants.CLIMBER_HEIGHT_LIMIT);
+    climberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    climberMotor.setSmartCurrentLimit(Constants.ClimberConstants.CLIMBER_MOTOR_CURRENT_LIMIT);
+    climberMotor.burnFlash();
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Climber/ClimberSpeed",climberMotor.get());
-    Logger.recordOutput("Climber/ClimberPosition",climberMotor.getEncoder().getPosition());
+    Logger.recordOutput("Climber/ClimberSpeed", climberMotor.get());
+    Logger.recordOutput("Climber/ClimberPosition", climberMotor.getEncoder().getPosition());
+    Logger.recordOutput("Climber/ClimberCurrent", climberMotor.getOutputCurrent());
   }
-  public Command setClimberSpeed(DoubleSupplier Double_Supplier){
+
+  public Command setClimberSpeed(DoubleSupplier doubleSupplier){
     return run(() -> {
-      climberMotor.set(Double_Supplier.getAsDouble());
+      climberMotor.set(doubleSupplier.getAsDouble());
     });
   }
 }

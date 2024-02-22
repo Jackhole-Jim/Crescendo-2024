@@ -95,8 +95,11 @@ public final class Constants
     public static final int LINEAR_ACTUATOR_RIGHT = 1;
   }
   
-  public static class climberConstants {
+  public static class ClimberConstants {
     public static final int CLIMBER_MOTOR_ID = 18;
+    public static final double CLIMBER_MOTOR_CONVERSION = (1/48) * (1 * Math.PI);
+    public static final float CLIMBER_HEIGHT_LIMIT = 20.0f;
+    public static final int CLIMBER_MOTOR_CURRENT_LIMIT = 40;
   }
 
 }
