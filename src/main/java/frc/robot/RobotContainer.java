@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,6 +31,9 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
 import org.opencv.core.Mat;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -60,12 +64,15 @@ public class RobotContainer
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
+  private final SendableChooser<Command> autoChooser;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
+    NamedCommands.registerCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
     // Configure the trigger bindings
+    
     configureBindings();
 
     // AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
@@ -83,6 +90,7 @@ public class RobotContainer
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
     // controls are front-left positive
+    
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
     // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
@@ -97,8 +105,8 @@ public class RobotContainer
     // left stick controls translation
     // right stick controls the angular velocity of the robot
     Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> scaleJoystick(MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
-        () -> scaleJoystick(MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
         () -> scaleJoystick(-m_driverController.getRightX(), 2));
 
     Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
@@ -108,6 +116,10 @@ public class RobotContainer
 
     drivebase.setDefaultCommand(
         !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim);
+
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -133,9 +145,13 @@ public class RobotContainer
     intakeSubsystem.setDefaultCommand(intakeSubsystem.SetIntakeSpeedCommand(
       () -> m_operatorController.getLeftTriggerAxis() - m_operatorController.getRightTriggerAxis()
     ));
-    ampWhipperSubsystem.setDefaultCommand(ampWhipperSubsystem.setWhipperSpeed(
-      () -> -MathUtil.applyDeadband(m_operatorController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) 
-    ));
+    ampWhipperSubsystem.setDefaultCommand(
+      ampWhipperSubsystem.setWhipperSpeed(
+        () -> ampWhipperSubsystem.IsWhipperExtended() 
+                ? -MathUtil.applyDeadband(m_operatorController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) 
+                : 0
+      )
+    );
 
      climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
       () -> m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()
@@ -183,7 +199,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return new InstantCommand();// drivebase.getAutonomousCommand("New Path", true);
+    return autoChooser.getSelected();
   }
 
   public void setDriveMode()

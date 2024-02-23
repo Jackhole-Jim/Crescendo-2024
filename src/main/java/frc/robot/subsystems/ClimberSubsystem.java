@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,12 +22,14 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     climberMotor.restoreFactoryDefaults();
-    climberMotor.setInverted(true);
+    // climberMotor.setInverted(true);
+    climberMotor.setIdleMode(IdleMode.kBrake);
     climberMotor.setSoftLimit(SoftLimitDirection.kReverse, 0);
     climberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     climberMotor.setSoftLimit(SoftLimitDirection.kForward, Constants.ClimberConstants.CLIMBER_HEIGHT_LIMIT);
     climberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     climberMotor.setSmartCurrentLimit(Constants.ClimberConstants.CLIMBER_MOTOR_CURRENT_LIMIT);
+    climberMotor.getEncoder().setPositionConversionFactor(Constants.ClimberConstants.CLIMBER_MOTOR_CONVERSION);
     climberMotor.burnFlash();
   }
 

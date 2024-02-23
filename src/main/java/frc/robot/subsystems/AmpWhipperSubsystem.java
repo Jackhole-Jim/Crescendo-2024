@@ -37,6 +37,10 @@ public class AmpWhipperSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  public boolean IsWhipperExtended(){
+    return linearActuatorLeft.getSpeed() > 0.0;
+  }
+
   public Command extendActuators(){
     return runOnce(() -> {
       linearActuatorLeft.setSpeed(1);
