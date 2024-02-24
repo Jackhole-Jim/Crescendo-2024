@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -45,6 +49,8 @@ public class Robot extends LoggedRobot
     return instance;
   }
 
+  private AddressableLED m_led;
+  private AddressableLEDBuffer m_ledBuffer;
   /**
    * This function is run when the robot is first started up and should be used for any initialization code.
    */
@@ -61,6 +67,21 @@ public class Robot extends LoggedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
+
+    // UsbCamera camera = CameraServer.startAutomaticCapture();
+    // camera.setResolution(480, 360);
+    // camera.setFPS(15);
+    //  m_led = new AddressableLED(2);
+
+    // // Reuse buffer
+    // // Default to a length of 60, start empty output
+    // // Length is expensive to set, so only set it once, then just update data
+    // m_ledBuffer = new AddressableLEDBuffer(60);
+    // m_led.setLength(m_ledBuffer.getLength());
+
+    // // Set the data
+    // m_led.setData(m_ledBuffer);
+    // m_led.start();
 
   }
 
@@ -80,6 +101,12 @@ public class Robot extends LoggedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
+    // for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+    //   // Sets the specified LED to the RGB values for red
+    //   m_ledBuffer.setRGB(i, 255, 0, 0);
+    // }
+   
+    // m_led.setData(m_ledBuffer);
   }
 
   /**

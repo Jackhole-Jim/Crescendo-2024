@@ -30,7 +30,7 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     climberMotor.setSmartCurrentLimit(Constants.ClimberConstants.CLIMBER_MOTOR_CURRENT_LIMIT);
     climberMotor.getEncoder().setPositionConversionFactor(Constants.ClimberConstants.CLIMBER_MOTOR_CONVERSION);
-    climberMotor.burnFlash();
+    // climberMotor.burnFlash();
   }
 
   @Override

@@ -4,10 +4,14 @@
   "holonomicMode": true,
   "pathFolders": [
     "Drive Forward",
-    "Shoot And Drive Forward"
+    "Note Approach Paths",
+    "Shoot And Drive Forward",
+    "Shooting Approach Paths"
   ],
   "autoFolders": [
+    "2 Note",
     "Drive Forward",
+    "3 Note",
     "Shoot And Drive Forward"
   ],
   "defaultMaxVel": 3.0,

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8093860062363999,
-        "y": 6.61
+        "x": 1.4174820372432768,
+        "y": 4.174813135951059
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2208442855265602,
-        "y": 7.322666644925423
+        "x": 0.9263275506607991,
+        "y": 4.128036518181299
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.9719127324240409,
-        "y": 6.668834620329574
+        "x": 0.64,
+        "y": 4.45
       },
       "prevControl": {
-        "x": 1.4548077624104452,
-        "y": 6.668834620329574
+        "x": 0.8738830888487986,
+        "y": 4.110869521169242
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +30,25 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Pre Spool",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "PreSpoolShooter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 1.0,
@@ -38,14 +56,14 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -2.2906100426385874,
+    "velocity": 0.25,
+    "rotation": -60.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Shoot And Drive Forward",
+  "folder": "Shooting Approach Paths",
   "previewStartingState": {
-    "rotation": 59.80837703904235,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": false

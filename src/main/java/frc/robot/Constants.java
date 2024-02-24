@@ -79,13 +79,14 @@ public final class Constants
     public static final int INDEX_MOTOR_ID = 15;
     public static final double INDEX_RAMP_RATE = 0.25;
     public static final double SHOOTER_GEARBOX_RATIO = 1.33;
-    public static final double SHOOTER_SETPOINT_TOLERANCE = 200.0;
+    public static final double SHOOTER_SETPOINT_TOLERANCE = 400.0;
     
     public static final double SHOOTER_P = 0.00005;
     public static final double SHOOTER_D = 0.005;
     public static final double SHOOTER_FF = 0.00022101750073488802;
 
     public static final int SPEAKER_SHOOTING_SPEED_RPM = 6000;
+    public static final int SPEAKER_PRE_SPOOL_SPEED_RPM = 6000;
     public static final int AMP_SHOOTING_SPEED_RPM = 800;
   }
 
@@ -98,7 +99,7 @@ public final class Constants
   public static class ClimberConstants {
     public static final int CLIMBER_MOTOR_ID = 18;
     public static final double CLIMBER_MOTOR_CONVERSION = (1/48.0) * (1 * Math.PI);
-    public static final float CLIMBER_HEIGHT_LIMIT = 20.0f;
+    public static final float CLIMBER_HEIGHT_LIMIT = 18.0f;
     public static final int CLIMBER_MOTOR_CURRENT_LIMIT = 40;
   }
 
