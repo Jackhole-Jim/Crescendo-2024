@@ -54,9 +54,9 @@ public class AmpWhipperSubsystem extends SubsystemBase {
       linearActuatorRight.setSpeed(-1);
     });
   }
-  public Command setWhipperSpeed(DoubleSupplier Double_Supplier){
+  public Command setWhipperSpeed(DoubleSupplier doubleSupplier){
     return run(() -> {
-      whipperMotor.set(Double_Supplier.getAsDouble());
+      whipperMotor.set(doubleSupplier.getAsDouble());
     });
   }
 }

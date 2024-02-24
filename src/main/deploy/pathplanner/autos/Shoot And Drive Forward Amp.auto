@@ -18,12 +18,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Shoot And Drive Forward Amp"
@@ -32,6 +26,6 @@
       ]
     }
   },
-  "folder": "New Folder",
+  "folder": "Shoot And Drive Forward",
   "choreoAuto": false
 }

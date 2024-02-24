@@ -26,12 +26,10 @@ public class ShootNoteCommand extends SequentialCommandGroup {
     addCommands(
       new WaitCommand(2)
         .raceWith(
-          new WaitUntilCommand(() -> !intakeSubsystem.IsNotePresent())
+          new WaitUntilCommand(() -> !intakeSubsystem.IsNotePresent())//keep shooting until note is no longer present + 0.5 seconds or timeout after 2 seconds
           .andThen(new WaitCommand(0.5))
         )
     );
-    addCommands(shooterSubsystem.StopShooter());
-    addCommands(shooterSubsystem.StopIndexMotor());
-    addCommands(intakeSubsystem.StopIntakeCommand());
+    addCommands(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
   }
 }

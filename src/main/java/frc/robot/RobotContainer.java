@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ShootNoteCommand;
+import frc.robot.commands.StopShooterSystem;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.AmpWhipperSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -71,6 +72,14 @@ public class RobotContainer
   public RobotContainer()
   {
     NamedCommands.registerCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
+    NamedCommands.registerCommand("IntakeNote", 
+      intakeSubsystem.SetIntakeSpeedCommand(
+        () -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3//make it so our intake runs at 3x the surface speed of the robot in the forward direction
+      )
+      .onlyWhile(() -> !intakeSubsystem.IsNotePresent())
+    );
+    NamedCommands.registerCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
+
     // Configure the trigger bindings
     
     configureBindings();
@@ -132,8 +141,21 @@ public class RobotContainer
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
+    
     m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
+    m_driverController
+      .rightBumper()
+      .whileTrue(NamedCommands.getCommand("ShootNote"))
+      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
+    m_driverController
+      .leftBumper()
+      .and(() -> !intakeSubsystem.IsNotePresent())
+      .whileTrue(NamedCommands.getCommand("IntakeNote"))
+      .onFalse(NamedCommands.getCommand("StopIntake"));
+      
+    climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
+      () -> m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()
+    ));
     // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
     // new JoystickButton(driverXbox,
     //                    2).whileTrue(
@@ -152,38 +174,16 @@ public class RobotContainer
                 : 0
       )
     );
-
-     climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
-      () -> m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()
-    ));
-
-
     m_operatorController.y().onTrue(ampWhipperSubsystem.extendActuators());
     m_operatorController.a().onTrue(ampWhipperSubsystem.retractActuators());
-    m_driverController
-      .rightBumper()
-      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM))
-      .onFalse(
-        shooterSubsystem.StopShooter()
-        .andThen(shooterSubsystem.StopIndexMotor())
-        .andThen(intakeSubsystem.StopIntakeCommand())
-      );
     m_operatorController
       .rightBumper()
       .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM))
-      .onFalse(
-        shooterSubsystem.StopShooter()
-        .andThen(shooterSubsystem.StopIndexMotor())
-        .andThen(intakeSubsystem.StopIntakeCommand())
-      );
-    m_driverController
-      .leftBumper()
-      .and(() -> !intakeSubsystem.IsNotePresent())
-      .whileTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3))//make it so our intake runs at 2x the surface speed of thr robot in the forward direction
-      .onFalse(intakeSubsystem.StopIntakeCommand());
+      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
+    
 
-    SmartDashboard.putNumber("IntakeSpeed", 0);
-    m_driverController.b().onTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> SmartDashboard.getNumber("IntakeSpeed", 0)));
+    // SmartDashboard.putNumber("IntakeSpeed", 0);
+    // m_driverController.b().onTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> SmartDashboard.getNumber("IntakeSpeed", 0)));
   }
 
   public static double scaleJoystick(double value, double power)
