@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -88,6 +90,8 @@ public final class Constants
     public static final int SPEAKER_SHOOTING_SPEED_RPM = 6000;
     public static final int SPEAKER_PRE_SPOOL_SPEED_RPM = 6000;
     public static final int AMP_SHOOTING_SPEED_RPM = 800;
+
+    public static final double PRE_SPOOL_DISTANCE_METERS = 3.0;
   }
 
   public static class WhipperConstants {
@@ -103,4 +107,13 @@ public final class Constants
     public static final int CLIMBER_MOTOR_CURRENT_LIMIT = 40;
   }
 
+  public static class FieldConstants {
+    public static final Translation2d SPEAKER_POSE_BLUE = new Translation2d(0, 5.55);
+    public static final Translation2d SPEAKER_POSE_RED = new Translation2d(16.52, 5.55);
+  }
+
+  public static class LEDConstants {
+    public static final int TOTAL_LEDS = 36;
+    public static final int MID_POINT_START_LED_INDEX = 13;
+  }
 }

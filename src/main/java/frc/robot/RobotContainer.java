@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,12 +22,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.PreSpoolShooterCommand;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.StopShooterSystem;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.AmpWhipperSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -53,14 +56,10 @@ public class RobotContainer
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   private final AmpWhipperSubsystem ampWhipperSubsystem = new AmpWhipperSubsystem();
-  // CommandJoystick rotationController = new CommandJoystick(1);
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  // CommandJoystick driverController = new CommandJoystick(1);
-
-  // // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
-  // XboxController driverXbox = new XboxController(0);
 
   private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+
+  private final LEDSubsystem ledSubsystem = new LEDSubsystem();
 
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
@@ -71,7 +70,7 @@ public class RobotContainer
    */
   public RobotContainer()
   {
-    NamedCommands.registerCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
+    NamedCommands.registerCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
     NamedCommands.registerCommand("PreSpoolShooter", shooterSubsystem.StartShooter(Constants.ShooterConstants.SPEAKER_PRE_SPOOL_SPEED_RPM));
     NamedCommands.registerCommand("IntakeNote", 
       intakeSubsystem.SetIntakeSpeedCommand(
@@ -79,6 +78,7 @@ public class RobotContainer
       )
       .onlyWhile(() -> !intakeSubsystem.IsNotePresent())
       .andThen(intakeSubsystem.StopIntakeCommand())
+      .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
     );
     NamedCommands.registerCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
 
@@ -115,18 +115,7 @@ public class RobotContainer
     // controls are front-left positive
     // left stick controls translation
     // right stick controls the angular velocity of the robot
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
-        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
-        () -> scaleJoystick(-m_driverController.getRightX(), 2));
-
-    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
-        () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> m_driverController.getRawAxis(2));
-
-    drivebase.setDefaultCommand(
-        !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim);
+    
 
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -144,6 +133,22 @@ public class RobotContainer
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
+        () -> scaleJoystick(-m_driverController.getRightX(), 2));
+
+    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
+        () -> scaleJoystick(-m_driverController.getRightX(), 2));
+
+    drivebase.setDefaultCommand(
+        (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
+        .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem)));
+
+
+
     m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
     m_driverController
       .rightBumper()
@@ -180,7 +185,7 @@ public class RobotContainer
     m_operatorController.a().onTrue(ampWhipperSubsystem.retractActuators());
     m_operatorController
       .rightBumper()
-      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM))
+      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM))
       .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
     
 

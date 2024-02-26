@@ -4,11 +4,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -16,11 +18,14 @@ import frc.robot.subsystems.ShooterSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootNoteCommand extends SequentialCommandGroup {
   /** Creates a new ShootNoteCommand. */
-  public ShootNoteCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, int shootingRPM) {
+  public ShootNoteCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, LEDSubsystem ledSubsystem, int shootingRPM) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(shooterSubsystem.StartShooter(shootingRPM));
-    addCommands(new WaitUntilCommand(()-> shooterSubsystem.IsAtSetpoint()));
+    addCommands(
+      ledSubsystem.setPercentageLitCommand(() -> shooterSubsystem.GetRPM() / shooterSubsystem.GetSetpoint(), Color.kRed)
+      .until(()-> shooterSubsystem.IsAtSetpoint())
+    );
     addCommands(shooterSubsystem.StartIndexMotor());
     addCommands(intakeSubsystem.SetIntakeSpeedCommand(Constants.IntakeConstants.SHOOTING_SPEED));
     addCommands(
@@ -29,7 +34,15 @@ public class ShootNoteCommand extends SequentialCommandGroup {
           new WaitUntilCommand(() -> !intakeSubsystem.IsNotePresent())//keep shooting until note is no longer present + 0.5 seconds or timeout after 2 seconds
           .andThen(new WaitCommand(0.5))
         )
+        .raceWith(//blink LEDs while note is shooting
+          ledSubsystem.setPercentageLitCommand(0, Color.kGreen)
+          .andThen(new WaitCommand(0.25))
+          .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kGreen))
+          .andThen(new WaitCommand(0.25))
+          .repeatedly()
+        )
     );
     addCommands(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
+    addCommands(ledSubsystem.setPercentageLitCommand(0, Color.kGreen));
   }
 }

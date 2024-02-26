@@ -77,4 +77,14 @@ public class ShooterSubsystem extends SubsystemBase {
   {
     return Math.abs(shooterMotor.getEncoder().getVelocity() - shooterSetpoint) < Constants.ShooterConstants.SHOOTER_SETPOINT_TOLERANCE;
   }
+
+  public int GetSetpoint()
+  {
+    return shooterSetpoint;
+  }
+
+  public double GetRPM()
+  {
+    return shooterMotor.getEncoder().getVelocity();
+  }
 }
