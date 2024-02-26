@@ -10,11 +10,16 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,6 +30,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
 import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -46,6 +54,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public        double      maximumSpeed = Units.feetToMeters(14.5);
 
+  public final SwerveDrivePoseEstimator swerveDrivePoseEstimatorCopy;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -68,7 +77,7 @@ public class SwerveSubsystem extends SubsystemBase
     System.out.println("}");
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
@@ -79,6 +88,16 @@ public class SwerveSubsystem extends SubsystemBase
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
+
+    swerveDrivePoseEstimatorCopy =
+    new SwerveDrivePoseEstimator(
+        swerveDrive.kinematics,
+        swerveDrive.getYaw(),
+        swerveDrive.getModulePositions(),
+        new Pose2d(
+            new Translation2d(0, 0),
+            Rotation2d.fromDegrees(
+                0)));
 
     setupPathPlanner();
   }
@@ -92,6 +111,16 @@ public class SwerveSubsystem extends SubsystemBase
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
+
+    swerveDrivePoseEstimatorCopy =
+    new SwerveDrivePoseEstimator(
+        swerveDrive.kinematics,
+        swerveDrive.getYaw(),
+        swerveDrive.getModulePositions(),
+        new Pose2d(
+            new Translation2d(0, 0),
+            Rotation2d.fromDegrees(
+                0)));
   }
 
   /**
@@ -284,7 +313,13 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    
+    Logger.recordOutput("Drive/DrivePose", swerveDrive.getPose());
+    Logger.recordOutput("Drive/DriveDesiredStates", swerveDrive.getStates());
+
+
+
+    swerveDrivePoseEstimatorCopy.update(swerveDrive.getYaw(), swerveDrive.getModulePositions());
+    Logger.recordOutput("Drive/DrivePoseCopy", swerveDrivePoseEstimatorCopy.getEstimatedPosition());
   }
 
   @Override
@@ -312,6 +347,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
+
+    swerveDrivePoseEstimatorCopy.resetPosition(swerveDrive.getYaw(), swerveDrive.getModulePositions(), initialHolonomicPose);
   }
 
   /**
@@ -322,6 +359,11 @@ public class SwerveSubsystem extends SubsystemBase
   public Pose2d getPose()
   {
     return swerveDrive.getPose();
+  }
+
+  public Pose2d getPoseCopy()
+  {
+    return swerveDrivePoseEstimatorCopy.getEstimatedPosition();
   }
 
   /**
@@ -479,5 +521,10 @@ public class SwerveSubsystem extends SubsystemBase
   public void addFakeVisionReading()
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
+  public void addVisionMeasurement(Pose2d pose, double timstamp, Matrix<N3, N1> visionMeasurementStdDevs)
+  {
+    swerveDrivePoseEstimatorCopy.addVisionMeasurement(pose, timstamp, visionMeasurementStdDevs);
   }
 }
