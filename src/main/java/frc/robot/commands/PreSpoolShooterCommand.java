@@ -41,7 +41,7 @@ public class PreSpoolShooterCommand extends Command {
         )
     )
     {
-      mShooterSubsystem.StartShooter(Constants.ShooterConstants.SPEAKER_PRE_SPOOL_SPEED_RPM).schedule();
+      mShooterSubsystem.StartShooterCommand(Constants.ShooterConstants.TELEOP_SPEAKER_PRE_SPOOL_SPEED_RPM).schedule();
     }
   }
 

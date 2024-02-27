@@ -21,7 +21,7 @@ public class ShootNoteCommand extends SequentialCommandGroup {
   public ShootNoteCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, LEDSubsystem ledSubsystem, int shootingRPM) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(shooterSubsystem.StartShooter(shootingRPM));
+    addCommands(shooterSubsystem.StartShooterCommand(shootingRPM));
     addCommands(
       ledSubsystem.setPercentageLitCommand(() -> shooterSubsystem.GetRPM() / shooterSubsystem.GetSetpoint(), Color.kRed)
       .until(()-> shooterSubsystem.IsAtSetpoint())
@@ -36,13 +36,12 @@ public class ShootNoteCommand extends SequentialCommandGroup {
         )
         .raceWith(//blink LEDs while note is shooting
           ledSubsystem.setPercentageLitCommand(0, Color.kGreen)
-          .andThen(new WaitCommand(0.25))
+          .andThen(new WaitCommand(0.1))
           .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kGreen))
-          .andThen(new WaitCommand(0.25))
+          .andThen(new WaitCommand(0.1))
           .repeatedly()
         )
     );
-    addCommands(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
-    addCommands(ledSubsystem.setPercentageLitCommand(0, Color.kGreen));
+    addCommands(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
   }
 }

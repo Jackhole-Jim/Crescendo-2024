@@ -88,7 +88,8 @@ public final class Constants
     public static final double SHOOTER_FF = 0.00022101750073488802;
 
     public static final int SPEAKER_SHOOTING_SPEED_RPM = 6000;
-    public static final int SPEAKER_PRE_SPOOL_SPEED_RPM = 6000;
+    public static final int AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM = 6000;
+    public static final int TELEOP_SPEAKER_PRE_SPOOL_SPEED_RPM = 3000;
     public static final int AMP_SHOOTING_SPEED_RPM = 800;
 
     public static final double PRE_SPOOL_DISTANCE_METERS = 3.0;
@@ -113,7 +114,8 @@ public final class Constants
   }
 
   public static class LEDConstants {
-    public static final int TOTAL_LEDS = 36;
+    public static final int LED_PORT = 2;
+    public static final int TOTAL_LEDS = 34;
     public static final int MID_POINT_START_LED_INDEX = 13;
   }
 }

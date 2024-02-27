@@ -71,14 +71,14 @@ public class RobotContainer
   public RobotContainer()
   {
     NamedCommands.registerCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
-    NamedCommands.registerCommand("PreSpoolShooter", shooterSubsystem.StartShooter(Constants.ShooterConstants.SPEAKER_PRE_SPOOL_SPEED_RPM));
+    NamedCommands.registerCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
     NamedCommands.registerCommand("IntakeNote", 
       intakeSubsystem.SetIntakeSpeedCommand(
         () -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3//make it so our intake runs at 3x the surface speed of the robot in the forward direction
       )
       .onlyWhile(() -> !intakeSubsystem.IsNotePresent())
-      .andThen(intakeSubsystem.StopIntakeCommand())
       .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
+      .andThen(intakeSubsystem.StopIntakeCommand())
     );
     NamedCommands.registerCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
 
@@ -145,7 +145,8 @@ public class RobotContainer
 
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
-        .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem)));
+        .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem))
+    );
 
 
 
@@ -153,11 +154,11 @@ public class RobotContainer
     m_driverController
       .rightBumper()
       .whileTrue(NamedCommands.getCommand("ShootNote"))
-      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
+      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
     m_driverController
       .leftBumper()
-      .and(() -> !intakeSubsystem.IsNotePresent())
-      .whileTrue(NamedCommands.getCommand("IntakeNote"))
+      // .and(() -> !intakeSubsystem.IsNotePresent())
+      .onTrue(NamedCommands.getCommand("IntakeNote"))
       .onFalse(NamedCommands.getCommand("StopIntake"));
       
     climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
@@ -186,7 +187,7 @@ public class RobotContainer
     m_operatorController
       .rightBumper()
       .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM))
-      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem));
+      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
     
 
     // SmartDashboard.putNumber("IntakeSpeed", 0);

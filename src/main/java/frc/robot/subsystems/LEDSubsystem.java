@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+import org.opencv.core.Mat;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -19,6 +22,7 @@ public class LEDSubsystem extends SubsystemBase {
   private AddressableLEDBuffer m_ledBuffer;
 
   public LEDSubsystem() {
+    m_led = new AddressableLED(Constants.LEDConstants.LED_PORT);
     m_ledBuffer = new AddressableLEDBuffer(Constants.LEDConstants.TOTAL_LEDS);
     m_led.setLength(m_ledBuffer.getLength());
 
@@ -29,13 +33,19 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_led.setData(m_ledBuffer);
+    // m_led.setData(m_ledBuffer);
+    // Logger.recordOutput("LEDs/LEDBuffer", null);
   }
 
   //0-1
   public void setPercentageLit(double percentage, Color color)
   {
-    for(int i = 0; i < percentage * Constants.LEDConstants.TOTAL_LEDS; i++)
+    percentage = Math.max(0, Math.min(1, percentage));
+
+    Logger.recordOutput("LEDs/LEDPercentage", percentage);
+    Logger.recordOutput("LEDs/LEDColor", color.toString());
+
+    for(int i = 0; i < Constants.LEDConstants.TOTAL_LEDS; i++)
     {
       m_ledBuffer.setLED(i, Color.kBlack);
     }
@@ -49,6 +59,8 @@ public class LEDSubsystem extends SubsystemBase {
     {
       m_ledBuffer.setLED(i, color);
     }
+    
+    m_led.setData(m_ledBuffer);
   }
 
   public Command setPercentageLitCommand(double percentage, Color color)

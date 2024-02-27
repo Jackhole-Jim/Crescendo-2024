@@ -39,7 +39,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     Logger.recordOutput("Shooter/RPM", shooterMotor.getEncoder().getVelocity());
-    Logger.recordOutput("Shooter/Setpoint", shooterSetpoint);
+    Logger.recordOutput("Shooter/Setpoint", GetSetpoint());
     Logger.recordOutput("Shooter/IndexMotorSpeed", indexMotor.getEncoder().getVelocity());
     Logger.recordOutput("Shooter/IndexMotorSet", indexMotor.get());
     Logger.recordOutput("Shooter/IsAtSetpoint", IsAtSetpoint());
@@ -57,11 +57,16 @@ public class ShooterSubsystem extends SubsystemBase {
     });
   }
 
-  public Command StartShooter(int rpm)
+  public void StartShooter(int rpm)
   {
-    return runOnce(()->{
       shooterSetpoint = rpm;
       shooterMotor.getPIDController().setReference(rpm, CANSparkMax.ControlType.kVelocity);
+  }
+
+  public Command StartShooterCommand(int rpm)
+  {
+    return runOnce(()->{
+      StartShooter(rpm);
     });
   }
 

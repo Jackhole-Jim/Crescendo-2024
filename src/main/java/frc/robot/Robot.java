@@ -49,8 +49,8 @@ public class Robot extends LoggedRobot
     return instance;
   }
 
-  private AddressableLED m_led;
-  private AddressableLEDBuffer m_ledBuffer;
+  // private AddressableLED m_led;
+  // private AddressableLEDBuffer m_ledBuffer;
   /**
    * This function is run when the robot is first started up and should be used for any initialization code.
    */
