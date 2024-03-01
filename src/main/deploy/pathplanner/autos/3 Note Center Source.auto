@@ -32,6 +32,12 @@
         {
           "type": "named",
           "data": {
+            "name": "StopDrivetrain"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootNote"
           }
         },
@@ -45,6 +51,12 @@
           "type": "path",
           "data": {
             "pathName": "Shooting Center Source Approach"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopDrivetrain"
           }
         },
         {

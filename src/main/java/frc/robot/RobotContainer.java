@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.PreSpoolShooterCommand;
 import frc.robot.commands.ShootNoteCommand;
+import frc.robot.commands.StopDriveTrainCommand;
 import frc.robot.commands.StopShooterSystem;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.AmpWhipperSubsystem;
@@ -81,6 +82,7 @@ public class RobotContainer
       .andThen(intakeSubsystem.StopIntakeCommand())
     );
     NamedCommands.registerCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
+    NamedCommands.registerCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
 
     // Configure the trigger bindings
     

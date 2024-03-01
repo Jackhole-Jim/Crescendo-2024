@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3186789318946823,
-      "y": 5.547612425391122
+      "x": 0.75,
+      "y": 6.64
     },
-    "rotation": 0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
@@ -20,13 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Approach Center Note From Center"
+            "pathName": "Approach Amp Note From Amp"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shooting Center Center Approach"
+            "pathName": "Shooting Amp Amp Approach"
           }
         },
         {
