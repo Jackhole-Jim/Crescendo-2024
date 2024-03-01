@@ -77,7 +77,7 @@ public class SwerveSubsystem extends SubsystemBase
     System.out.println("}");
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
@@ -315,6 +315,24 @@ public class SwerveSubsystem extends SubsystemBase
   {
     Logger.recordOutput("Drive/DrivePose", swerveDrive.getPose());
     Logger.recordOutput("Drive/DriveDesiredStates", swerveDrive.getStates());
+    Logger.recordOutput("Drive/FieldVelocity", swerveDrive.getFieldVelocity());
+    Logger.recordOutput("Drive/RobotVelocity", swerveDrive.getRobotVelocity());
+    Logger.recordOutput("Drive/ModulePositions", swerveDrive.getModulePositions());
+
+
+    Logger.recordOutput("Drive/moduleCount", SwerveDriveTelemetry.moduleCount);
+    Logger.recordOutput("Drive/wheelLocations", SwerveDriveTelemetry.wheelLocations);
+    Logger.recordOutput("Drive/measuredStates", SwerveDriveTelemetry.measuredStates);
+    Logger.recordOutput("Drive/desiredStates", SwerveDriveTelemetry.desiredStates);
+    Logger.recordOutput("Drive/robotRotation", SwerveDriveTelemetry.robotRotation);
+    Logger.recordOutput("Drive/maxSpeed", SwerveDriveTelemetry.maxSpeed);
+    Logger.recordOutput("Drive/rotationUnit", SwerveDriveTelemetry.rotationUnit);
+    Logger.recordOutput("Drive/sizeLeftRight", SwerveDriveTelemetry.sizeLeftRight);
+    Logger.recordOutput("Drive/sizeFrontBack", SwerveDriveTelemetry.sizeFrontBack);
+    Logger.recordOutput("Drive/forwardDirection", SwerveDriveTelemetry.forwardDirection);
+    Logger.recordOutput("Drive/maxAngularVelocity", SwerveDriveTelemetry.maxAngularVelocity);
+    Logger.recordOutput("Drive/measuredChassisSpeeds", SwerveDriveTelemetry.measuredChassisSpeeds);
+    Logger.recordOutput("Drive/desiredChassisSpeeds", SwerveDriveTelemetry.desiredChassisSpeeds);
 
 
 
