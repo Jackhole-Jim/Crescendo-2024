@@ -71,9 +71,9 @@ public class RobotContainer
    */
   public RobotContainer()
   {
-    NamedCommands.registerCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
-    NamedCommands.registerCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
-    NamedCommands.registerCommand("IntakeNote", 
+    registerAndNameCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
+    registerAndNameCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
+    registerAndNameCommand("IntakeNote", 
       intakeSubsystem.SetIntakeSpeedCommand(
         () -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3//make it so our intake runs at 3x the surface speed of the robot in the forward direction
       )
@@ -81,8 +81,8 @@ public class RobotContainer
       .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
       .andThen(intakeSubsystem.StopIntakeCommand())
     );
-    NamedCommands.registerCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
-    NamedCommands.registerCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
+    registerAndNameCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
+    registerAndNameCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
 
     // Configure the trigger bindings
     
@@ -122,6 +122,12 @@ public class RobotContainer
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
+  public void registerAndNameCommand(String name, Command command)
+  {
+    NamedCommands.registerCommand(name, command);
+    NamedCommands.getCommand(name).setName(name);
   }
 
   /**
