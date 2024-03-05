@@ -1,0 +1,61 @@
+{
+  "version": "3.0.2",
+  "layout": [
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": []
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": []
+        }
+      },
+      "title": "Line Graph"
+    },
+    {
+      "type": 9,
+      "fields": [
+        {
+          "key": "/RealOutputs/Drive/desiredStates",
+          "sourceTypeIndex": 0,
+          "sourceType": 5
+        },
+        {
+          "key": "/RealOutputs/Drive/measuredStates",
+          "sourceTypeIndex": 0,
+          "sourceType": 5
+        },
+        {
+          "key": "/RealOutputs/Drive/robotRotation",
+          "sourceTypeIndex": 0,
+          "sourceType": 2
+        }
+      ],
+      "listFields": [],
+      "options": {
+        "maxSpeed": 4.5,
+        "rotationUnits": "degrees",
+        "arrangement": "0,1,2,3",
+        "sizeLeftRight": 0.65,
+        "sizeFrontBack": 0.65,
+        "forwardDirection": "up"
+      },
+      "configHidden": false,
+      "title": "Swerve"
+    }
+  ]
+}
