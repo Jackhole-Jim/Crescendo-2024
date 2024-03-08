@@ -38,10 +38,16 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Shooter/RPM", shooterMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Shooter/ShooterRPM", shooterMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Shooter/ShooterCurrent", shooterMotor.getOutputCurrent());
+    Logger.recordOutput("Shooter/ShooterFault", shooterMotor.getFaults());
+    Logger.recordOutput("Shooter/ShooterStickyFault", shooterMotor.getStickyFaults());
     Logger.recordOutput("Shooter/Setpoint", GetSetpoint());
     Logger.recordOutput("Shooter/IndexMotorSpeed", indexMotor.getEncoder().getVelocity());
     Logger.recordOutput("Shooter/IndexMotorSet", indexMotor.get());
+    Logger.recordOutput("Shooter/IndexMotorCurrent", indexMotor.getOutputCurrent());
+    Logger.recordOutput("Shooter/IndexMotorFault", indexMotor.getFaults());
+    Logger.recordOutput("Shooter/IndexMotorStickyFault", indexMotor.getStickyFaults());
     Logger.recordOutput("Shooter/IsAtSetpoint", IsAtSetpoint());
   } 
 

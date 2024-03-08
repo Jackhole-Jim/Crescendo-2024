@@ -9,7 +9,9 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -35,6 +37,7 @@ import org.littletonrobotics.junction.Logger;
 
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -156,7 +159,19 @@ public class SwerveSubsystem extends SubsystemBase
           return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
         },
         this // Reference to this subsystem to set requirements
-                                  );
+    );
+
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        }
+    );
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        }
+    );
   }
 
   /**
@@ -334,7 +349,15 @@ public class SwerveSubsystem extends SubsystemBase
     Logger.recordOutput("Drive/measuredChassisSpeeds", SwerveDriveTelemetry.measuredChassisSpeeds);
     Logger.recordOutput("Drive/desiredChassisSpeeds", SwerveDriveTelemetry.desiredChassisSpeeds);
 
-
+    for(SwerveModule module : swerveDrive.swerveDriveConfiguration.modules)
+    {
+      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleCurrent", ((CANSparkMax)module.getAngleMotor().getMotor()).getOutputCurrent());
+      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleFaults", ((CANSparkMax)module.getAngleMotor().getMotor()).getFaults());
+      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleStickyFaults", ((CANSparkMax)module.getAngleMotor().getMotor()).getStickyFaults());
+      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveCurrent", ((CANSparkMax)module.getDriveMotor().getMotor()).getOutputCurrent());
+      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveFaults", ((CANSparkMax)module.getDriveMotor().getMotor()).getFaults());
+      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveStickyFaults", ((CANSparkMax)module.getDriveMotor().getMotor()).getStickyFaults());
+    }
 
     swerveDrivePoseEstimatorCopy.update(swerveDrive.getYaw(), swerveDrive.getModulePositions());
     Logger.recordOutput("Drive/DrivePoseCopy", swerveDrivePoseEstimatorCopy.getEstimatedPosition());

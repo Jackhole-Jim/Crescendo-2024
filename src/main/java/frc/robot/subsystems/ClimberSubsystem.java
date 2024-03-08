@@ -39,6 +39,8 @@ public class ClimberSubsystem extends SubsystemBase {
     Logger.recordOutput("Climber/ClimberSpeed", climberMotor.get());
     Logger.recordOutput("Climber/ClimberPosition", climberMotor.getEncoder().getPosition());
     Logger.recordOutput("Climber/ClimberCurrent", climberMotor.getOutputCurrent());
+    Logger.recordOutput("Climber/ClimberFault", climberMotor.getFaults());
+    Logger.recordOutput("Climber/ClimberStickyFault", climberMotor.getStickyFaults());
   }
 
   public Command setClimberSpeed(DoubleSupplier doubleSupplier){

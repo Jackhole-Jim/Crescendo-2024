@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -105,7 +106,8 @@ public class Robot extends LoggedRobot
     //   // Sets the specified LED to the RGB values for red
     //   m_ledBuffer.setRGB(i, 255, 0, 0);
     // }
-   
+  //   Pose2d.struct
+  //  Logger.recordOutput("CommandScheduler", CommandScheduler.getInstance());
     // m_led.setData(m_ledBuffer);
   }
 

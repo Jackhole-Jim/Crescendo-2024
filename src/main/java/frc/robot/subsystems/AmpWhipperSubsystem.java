@@ -8,6 +8,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.PWM;
@@ -35,6 +37,12 @@ public class AmpWhipperSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    Logger.recordOutput("Whipper/whipperMotorSpeed", whipperMotor.get());
+    Logger.recordOutput("Whipper/whipperMotorCurrent", whipperMotor.getOutputCurrent());
+    Logger.recordOutput("Whipper/whipperMotorFault", whipperMotor.getFaults());
+    Logger.recordOutput("Whipper/whipperMotorStickyFault", whipperMotor.getStickyFaults());
+    Logger.recordOutput("Whipper/actuatorLeftSet", linearActuatorLeft.getSpeed());
+    Logger.recordOutput("Whipper/actuatorRightSet", linearActuatorRight.getSpeed());
   }
 
   public boolean IsWhipperExtended(){
