@@ -26,7 +26,7 @@ public final class Constants
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
 
-  public static final int PDH_ID = 19;
+  public static final int PDH_ID = 22;
 
   public static final class Auton
   {
@@ -80,6 +80,7 @@ public final class Constants
 
   public static class ShooterConstants {
     public static final int SHOOTER_MOTOR_ID = 16;
+    public static final int SHOOTER_MOTOR_ID2 = 19;
     public static final int INDEX_MOTOR_ID = 15;
     public static final double INDEX_RAMP_RATE = 0.25;
     public static final double SHOOTER_GEARBOX_RATIO = 1.33;

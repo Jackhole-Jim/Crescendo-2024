@@ -15,8 +15,9 @@ import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
-  private final CANSparkMax shooterMotor = new CANSparkMax(Constants.ShooterConstants.SHOOTER_MOTOR_ID, MotorType.kBrushless) ;
-  private final CANSparkMax indexMotor = new CANSparkMax(Constants.ShooterConstants.INDEX_MOTOR_ID, MotorType.kBrushless) ; 
+  private final CANSparkMax shooterMotor = new CANSparkMax(Constants.ShooterConstants.SHOOTER_MOTOR_ID, MotorType.kBrushless);
+  private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.ShooterConstants.SHOOTER_MOTOR_ID2, MotorType.kBrushless);
+  private final CANSparkMax indexMotor = new CANSparkMax(Constants.ShooterConstants.INDEX_MOTOR_ID, MotorType.kBrushless); 
   private int shooterSetpoint = 0;
 
   public ShooterSubsystem() {
@@ -28,6 +29,10 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotor.getPIDController().setSmartMotionAllowedClosedLoopError(100, 0);
     shooterMotor.getEncoder().setVelocityConversionFactor(Constants.ShooterConstants.SHOOTER_GEARBOX_RATIO);
     shooterMotor.burnFlash();
+
+    shooterMotor2.restoreFactoryDefaults();
+    shooterMotor2.follow(shooterMotor);
+    shooterMotor2.burnFlash();
 
     indexMotor.restoreFactoryDefaults();
     indexMotor.setInverted (true);
@@ -42,6 +47,10 @@ public class ShooterSubsystem extends SubsystemBase {
     Logger.recordOutput("Shooter/ShooterCurrent", shooterMotor.getOutputCurrent());
     Logger.recordOutput("Shooter/ShooterFault", shooterMotor.getFaults());
     Logger.recordOutput("Shooter/ShooterStickyFault", shooterMotor.getStickyFaults());
+    Logger.recordOutput("Shooter/Shooter2RPM", shooterMotor2.getEncoder().getVelocity());
+    Logger.recordOutput("Shooter/Shooter2Current", shooterMotor2.getOutputCurrent());
+    Logger.recordOutput("Shooter/Shooter2Fault", shooterMotor2.getFaults());
+    Logger.recordOutput("Shooter/Shooter2StickyFault", shooterMotor2.getStickyFaults());
     Logger.recordOutput("Shooter/Setpoint", GetSetpoint());
     Logger.recordOutput("Shooter/IndexMotorSpeed", indexMotor.getEncoder().getVelocity());
     Logger.recordOutput("Shooter/IndexMotorSet", indexMotor.get());
