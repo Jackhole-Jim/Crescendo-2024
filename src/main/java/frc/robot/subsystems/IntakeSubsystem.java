@@ -23,6 +23,8 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
 private final CANSparkMax intakeUpper = new CANSparkMax(Constants.IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
 private final CANSparkMax intakeLower = new CANSparkMax(Constants.IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
+private final CANSparkMax intakeLeft = new CANSparkMax(Constants.IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+private final CANSparkMax intakeRight = new CANSparkMax(Constants.IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
 private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConstants.NOTE_BEAM_BREAK_CHANNEL);
   /** Creates a new IntakeSubsystem. */
@@ -48,6 +50,14 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     intakeLower.setIdleMode(IdleMode.kBrake);
     intakeLower.burnFlash();
 
+    intakeLeft.restoreFactoryDefaults();
+    intakeLeft.follow(intakeUpper);
+    intakeLeft.burnFlash();
+
+    intakeRight.restoreFactoryDefaults();
+    intakeRight.follow(intakeUpper, true);
+    intakeRight.burnFlash();
+
     noteBeamBreak.setAverageBits(24);
     AnalogInput.setGlobalSampleRate(1500);
   }
@@ -62,6 +72,14 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     Logger.recordOutput("Intake/LowerCurrent", intakeLower.getOutputCurrent());
     Logger.recordOutput("Intake/LowerFault", intakeLower.getFaults());
     Logger.recordOutput("Intake/LowerStickyFault", intakeLower.getStickyFaults());
+    Logger.recordOutput("Intake/LeftSpeed", intakeLeft.getEncoder().getVelocity());
+    Logger.recordOutput("Intake/LeftCurrent", intakeLeft.getOutputCurrent());
+    Logger.recordOutput("Intake/LeftFault", intakeLeft.getFaults());
+    Logger.recordOutput("Intake/LeftStickyFault", intakeLeft.getStickyFaults());
+    Logger.recordOutput("Intake/RightSpeed", intakeRight.getEncoder().getVelocity());
+    Logger.recordOutput("Intake/RightCurrent", intakeRight.getOutputCurrent());
+    Logger.recordOutput("Intake/RightFault", intakeRight.getFaults());
+    Logger.recordOutput("Intake/RightStickyFault", intakeRight.getStickyFaults());
     Logger.recordOutput("Intake/IsNotePresent", IsNotePresent());
     Logger.recordOutput("Intake/NoteBeamBreakValue", noteBeamBreak.getAverageVoltage());
     // SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));

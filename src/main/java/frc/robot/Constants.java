@@ -59,6 +59,8 @@ public final class Constants
   public static class IntakeConstants {
     public static final int TOP_MOTOR_ID = 14;
     public static final int BOTTOM_MOTOR_ID = 13;
+    public static final int LEFT_MOTOR_ID = 20;
+    public static final int RIGHT_MOTOR_ID = 21;
 
     public static final double TOP_GEAR_RATIO = 2.89;
     public static final double BOTTOM_GEAR_RATIO = 1.33;
