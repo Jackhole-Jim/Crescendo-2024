@@ -58,7 +58,7 @@ public class Robot extends LoggedRobot
   @Override
   public void robotInit()
   {
-    // Logger.addDataReceiver(new NT4Publisher()); 
+    Logger.addDataReceiver(new NT4Publisher()); 
     Logger.addDataReceiver(new WPILOGWriter());
     Logger.start();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
