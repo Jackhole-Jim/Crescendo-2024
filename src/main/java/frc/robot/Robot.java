@@ -58,12 +58,16 @@ public class Robot extends LoggedRobot
   @Override
   public void robotInit()
   {
-    Logger.addDataReceiver(new NT4Publisher()); 
+    // Logger.addDataReceiver(new NT4Publisher()); 
     Logger.addDataReceiver(new WPILOGWriter());
     Logger.start();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    UsbCamera camera = CameraServer.startAutomaticCapture();
+    camera.setResolution(480, 360);
+    camera.setFPS(15);
+    camera.setWhiteBalanceManual(10);
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
