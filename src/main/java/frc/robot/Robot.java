@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,7 +59,9 @@ public class Robot extends LoggedRobot
   @Override
   public void robotInit()
   {
-    // Logger.addDataReceiver(new NT4Publisher()); 
+    // RobotController.setBrownoutVoltage(6.0);
+
+    Logger.addDataReceiver(new NT4Publisher()); 
     Logger.addDataReceiver(new WPILOGWriter());
     Logger.start();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -68,7 +71,6 @@ public class Robot extends LoggedRobot
     camera.setResolution(480, 360);
     camera.setFPS(15);
     camera.setWhiteBalanceManual(10);
-
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
