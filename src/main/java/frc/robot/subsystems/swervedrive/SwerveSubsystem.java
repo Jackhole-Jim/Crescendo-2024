@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Util;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
@@ -56,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
-  public        double      maximumSpeed = Units.feetToMeters(14.5);
+  public double maximumSpeed = Units.feetToMeters(16.6);
 
   public final SwerveDrivePoseEstimator swerveDrivePoseEstimatorCopy;
 
@@ -93,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new RuntimeException(e);
     }
-    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
+    swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via angle.
 
     maxAngleI = swerveDrive.swerveDriveConfiguration.modules[0].configuration.anglePIDF.i;
 
@@ -258,14 +260,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation)
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
-    return run(() -> {
-      // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
-                                                                      translationY.getAsDouble(),
-                                                                      rotation.getAsDouble() * Math.PI,
-                                                                      swerveDrive.getYaw().getRadians(),
-                                                                      swerveDrive.getMaximumVelocity()));
-    });
+    return driveCommand(translationX, translationY, rotation);
   }
 
   /**
@@ -336,10 +331,11 @@ public class SwerveSubsystem extends SubsystemBase
     Logger.runEveryN(10, () -> {
       for(SwerveModule module : swerveDrive.swerveDriveConfiguration.modules)
       {
-        PIDFConfig config = module.configuration.anglePIDF;
-        config.i = (Math.abs(module.getState().speedMetersPerSecond) / 4.5) * maxAngleI;
-        module.getAngleMotor().configurePIDF(config);
-        Logger.recordOutput("Drive/module" + module.moduleNumber + "/PIDi", config.i);
+        double i = (Math.abs(module.getState().speedMetersPerSecond) / swerveDrive.getMaximumVelocity()) * maxAngleI;
+        ((CANSparkMax)module.getAngleMotor().getMotor())
+          .getPIDController()
+          .setI(i);
+        Logger.recordOutput("Drive/module" + module.moduleNumber + "/PIDi", i);
       }
     });
 
@@ -369,14 +365,8 @@ public class SwerveSubsystem extends SubsystemBase
 
     for(SwerveModule module : swerveDrive.swerveDriveConfiguration.modules)
     {
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleCurrent", ((CANSparkMax)module.getAngleMotor().getMotor()).getOutputCurrent());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleFaults", ((CANSparkMax)module.getAngleMotor().getMotor()).getFaults());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleStickyFaults", ((CANSparkMax)module.getAngleMotor().getMotor()).getStickyFaults());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/angleTemp", ((CANSparkMax)module.getAngleMotor().getMotor()).getMotorTemperature());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveCurrent", ((CANSparkMax)module.getDriveMotor().getMotor()).getOutputCurrent());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveFaults", ((CANSparkMax)module.getDriveMotor().getMotor()).getFaults());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveStickyFaults", ((CANSparkMax)module.getDriveMotor().getMotor()).getStickyFaults());
-      Logger.recordOutput("Drive/module" + module.moduleNumber + "/driveTemp", ((CANSparkMax)module.getDriveMotor().getMotor()).getMotorTemperature());
+      Util.LogCANSparkMax("Drive/module" + module.moduleNumber + "/angle", (CANSparkMax)module.getAngleMotor().getMotor());
+      Util.LogCANSparkMax("Drive/module" + module.moduleNumber + "/drive", (CANSparkMax)module.getDriveMotor().getMotor());
     }
 
     swerveDrivePoseEstimatorCopy.update(swerveDrive.getYaw(), swerveDrive.getModulePositions());

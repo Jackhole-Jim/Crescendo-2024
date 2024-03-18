@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Util;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
@@ -43,20 +44,11 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Shooter/ShooterRPM", shooterMotor.getEncoder().getVelocity());
-    Logger.recordOutput("Shooter/ShooterCurrent", shooterMotor.getOutputCurrent());
-    Logger.recordOutput("Shooter/ShooterFault", shooterMotor.getFaults());
-    Logger.recordOutput("Shooter/ShooterStickyFault", shooterMotor.getStickyFaults());
-    Logger.recordOutput("Shooter/Shooter2RPM", shooterMotor2.getEncoder().getVelocity());
-    Logger.recordOutput("Shooter/Shooter2Current", shooterMotor2.getOutputCurrent());
-    Logger.recordOutput("Shooter/Shooter2Fault", shooterMotor2.getFaults());
-    Logger.recordOutput("Shooter/Shooter2StickyFault", shooterMotor2.getStickyFaults());
+    Util.LogCANSparkMax("Shooter/Shooter", shooterMotor);
+    Util.LogCANSparkMax("Shooter/Shooter2", shooterMotor2);
+    Util.LogCANSparkMax("Shooter/IndexMotor", indexMotor);
+    
     Logger.recordOutput("Shooter/Setpoint", GetSetpoint());
-    Logger.recordOutput("Shooter/IndexMotorSpeed", indexMotor.getEncoder().getVelocity());
-    Logger.recordOutput("Shooter/IndexMotorSet", indexMotor.get());
-    Logger.recordOutput("Shooter/IndexMotorCurrent", indexMotor.getOutputCurrent());
-    Logger.recordOutput("Shooter/IndexMotorFault", indexMotor.getFaults());
-    Logger.recordOutput("Shooter/IndexMotorStickyFault", indexMotor.getStickyFaults());
     Logger.recordOutput("Shooter/IsAtSetpoint", IsAtSetpoint());
   } 
 

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Util;
 
 public class IntakeSubsystem extends SubsystemBase {
 private final CANSparkMax intakeUpper = new CANSparkMax(Constants.IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
@@ -72,14 +73,8 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     Logger.recordOutput("Intake/LowerCurrent", intakeLower.getOutputCurrent());
     Logger.recordOutput("Intake/LowerFault", intakeLower.getFaults());
     Logger.recordOutput("Intake/LowerStickyFault", intakeLower.getStickyFaults());
-    Logger.recordOutput("Intake/LeftSpeed", intakeLeft.getEncoder().getVelocity());
-    Logger.recordOutput("Intake/LeftCurrent", intakeLeft.getOutputCurrent());
-    Logger.recordOutput("Intake/LeftFault", intakeLeft.getFaults());
-    Logger.recordOutput("Intake/LeftStickyFault", intakeLeft.getStickyFaults());
-    Logger.recordOutput("Intake/RightSpeed", intakeRight.getEncoder().getVelocity());
-    Logger.recordOutput("Intake/RightCurrent", intakeRight.getOutputCurrent());
-    Logger.recordOutput("Intake/RightFault", intakeRight.getFaults());
-    Logger.recordOutput("Intake/RightStickyFault", intakeRight.getStickyFaults());
+    Util.LogCANSparkMax("Intake/IntakeLeft", intakeLeft);
+    Util.LogCANSparkMax("Intake/IntakeRight", intakeRight);
     Logger.recordOutput("Intake/IsNotePresent", IsNotePresent());
     Logger.recordOutput("Intake/NoteBeamBreakValue", noteBeamBreak.getAverageVoltage());
     // SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));

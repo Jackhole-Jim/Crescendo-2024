@@ -25,6 +25,7 @@ public class ShootNoteCommand extends SequentialCommandGroup {
     addCommands(
       ledSubsystem.setPercentageLitCommand(() -> shooterSubsystem.GetRPM() / shooterSubsystem.GetSetpoint(), Color.kRed)
       .until(()-> shooterSubsystem.IsAtSetpoint())
+      .raceWith(new WaitCommand(1.5))//shoot anyways after 1.5 seconds of spool up, helps when battery voltage is too low to get shooter up to full speed
     );
     addCommands(shooterSubsystem.StartIndexMotor());
     addCommands(intakeSubsystem.SetIntakeSpeedCommand(Constants.IntakeConstants.SHOOTING_SPEED));

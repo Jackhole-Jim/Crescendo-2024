@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Util;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -37,10 +38,8 @@ public class AmpWhipperSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Whipper/whipperMotorSpeed", whipperMotor.get());
-    Logger.recordOutput("Whipper/whipperMotorCurrent", whipperMotor.getOutputCurrent());
-    Logger.recordOutput("Whipper/whipperMotorFault", whipperMotor.getFaults());
-    Logger.recordOutput("Whipper/whipperMotorStickyFault", whipperMotor.getStickyFaults());
+    Util.LogCANSparkMax("Whipper/whipperMotor", whipperMotor);
+
     Logger.recordOutput("Whipper/actuatorLeftSet", linearActuatorLeft.getSpeed());
     Logger.recordOutput("Whipper/actuatorRightSet", linearActuatorRight.getSpeed());
   }

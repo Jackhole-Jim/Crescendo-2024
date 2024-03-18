@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Util;
 
 public class ClimberSubsystem extends SubsystemBase {
   private final CANSparkMax climberMotor = new CANSparkMax(Constants.ClimberConstants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
@@ -36,11 +37,7 @@ public class ClimberSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("Climber/ClimberSpeed", climberMotor.get());
-    Logger.recordOutput("Climber/ClimberPosition", climberMotor.getEncoder().getPosition());
-    Logger.recordOutput("Climber/ClimberCurrent", climberMotor.getOutputCurrent());
-    Logger.recordOutput("Climber/ClimberFault", climberMotor.getFaults());
-    Logger.recordOutput("Climber/ClimberStickyFault", climberMotor.getStickyFaults());
+    Util.LogCANSparkMax("Climber/ClimberMotor", climberMotor);
   }
 
   public Command setClimberSpeed(DoubleSupplier doubleSupplier){

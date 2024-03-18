@@ -17,7 +17,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -69,6 +72,8 @@ public class RobotContainer
   private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private int intakeBlinkCounter = 0;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -81,8 +86,18 @@ public class RobotContainer
         () -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3//make it so our intake runs at 3x the surface speed of the robot in the forward direction
       )
       .onlyWhile(() -> !intakeSubsystem.IsNotePresent())
-      .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
       .andThen(intakeSubsystem.StopIntakeCommand())
+      .andThen(new InstantCommand(() -> intakeBlinkCounter = 0))
+      .andThen(
+        ledSubsystem.setPercentageLitCommand(1, Color.kOrange)
+        .andThen(new WaitCommand(0.1))
+        .andThen(ledSubsystem.setPercentageLitCommand(0, Color.kOrange))
+        .andThen(new WaitCommand(0.1))
+        .andThen(new InstantCommand(() -> intakeBlinkCounter++))
+        .repeatedly()
+        .until(() -> intakeBlinkCounter >= 4)
+      )
+      .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
     );
     registerAndNameCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
     registerAndNameCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
