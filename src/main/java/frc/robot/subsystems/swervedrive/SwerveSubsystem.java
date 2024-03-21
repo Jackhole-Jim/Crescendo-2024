@@ -95,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new RuntimeException(e);
     }
-    swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via angle.
+    // swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via angle.
 
     maxAngleI = swerveDrive.swerveDriveConfiguration.modules[0].configuration.anglePIDF.i;
 
@@ -576,6 +576,6 @@ public class SwerveSubsystem extends SubsystemBase
 
   public void addVisionMeasurement(Pose2d pose, double timstamp, Matrix<N3, N1> visionMeasurementStdDevs)
   {
-    swerveDrivePoseEstimatorCopy.addVisionMeasurement(pose, timstamp, visionMeasurementStdDevs);
+    swerveDrive.addVisionMeasurement(pose, timstamp, visionMeasurementStdDevs);
   }
 }

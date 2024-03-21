@@ -45,7 +45,7 @@ public class VisionOdometryHelper extends Command {
               AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               new PhotonCamera("BackAprilTagCamera"),
-              new Transform3d(new Translation3d(-0.0508, 0.0508, 0.92075), new Rotation3d(0, -0.785398, Math.PI))
+              new Transform3d(new Translation3d(-0.14605, 0.2286, 0.635), new Rotation3d(0, -0.785398, Math.PI))
             )
           );
           // add(new PhotonPoseEstimator(

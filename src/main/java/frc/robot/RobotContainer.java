@@ -30,6 +30,7 @@ import frc.robot.commands.PreSpoolShooterCommand;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.StopDriveTrainCommand;
 import frc.robot.commands.StopShooterSystem;
+import frc.robot.commands.VisionOdometryHelper;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.AmpWhipperSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -172,6 +173,7 @@ public class RobotContainer
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
         .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem))
+        // .alongWith(new VisionOdometryHelper(drivebase))
     );
 
 
