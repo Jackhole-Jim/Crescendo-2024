@@ -97,7 +97,7 @@ public final class Constants
     public static final int TELEOP_SPEAKER_PRE_SPOOL_SPEED_RPM = 3000;
     public static final int AMP_SHOOTING_SPEED_RPM = 800;
 
-    public static final double PRE_SPOOL_DISTANCE_METERS = 3.0;
+    public static final double PRE_SPOOL_DISTANCE_METERS = 5.0;
   }
 
   public static class WhipperConstants {

@@ -173,7 +173,7 @@ public class RobotContainer
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
         .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem))
-        // .alongWith(new VisionOdometryHelper(drivebase))
+        .alongWith(new VisionOdometryHelper(drivebase))
     );
 
 

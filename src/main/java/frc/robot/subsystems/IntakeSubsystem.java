@@ -35,18 +35,18 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     intakeUpper.getPIDController().setP(0);
     intakeUpper.getPIDController().setI(0);
     intakeUpper.getPIDController().setD(0);
-    intakeUpper.getPIDController().setFF(Constants.IntakeConstants.UPPER_FF);
+    intakeUpper.getPIDController().setFF(Constants.IntakeConstants.UPPER_FF / Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
     intakeUpper.setIdleMode(IdleMode.kBrake);
     intakeUpper.setInverted(true);
-    // intakeUpper.getEncoder().setVelocityConversionFactor(Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
+    intakeUpper.getEncoder().setVelocityConversionFactor(Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
     intakeUpper.burnFlash();
     
     intakeLower.restoreFactoryDefaults();
-    // intakeLower.getEncoder().setVelocityConversionFactor(Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
+    intakeLower.getEncoder().setVelocityConversionFactor(Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
     intakeLower.getPIDController().setP(0);
     intakeLower.getPIDController().setI(0);
     intakeLower.getPIDController().setD(0);
-    intakeLower.getPIDController().setFF(Constants.IntakeConstants.LOWER_FF);
+    intakeLower.getPIDController().setFF(Constants.IntakeConstants.LOWER_FF / Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
     // intakeLower.getPIDController().setSmartMotionMaxVelocity(5500, 0);
     intakeLower.setIdleMode(IdleMode.kBrake);
     intakeLower.burnFlash();
@@ -65,11 +65,11 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Intake/UpperSpeed", intakeUpper.getEncoder().getVelocity() / Constants.IntakeConstants.VELOCITY_CONVERSION_TOP);
+    Logger.recordOutput("Intake/UpperSpeed", intakeUpper.getEncoder().getVelocity());
     Logger.recordOutput("Intake/UpperCurrent", intakeUpper.getOutputCurrent());
     Logger.recordOutput("Intake/UpperFault", intakeUpper.getFaults());
     Logger.recordOutput("Intake/UpperStickyFault", intakeUpper.getStickyFaults());
-    Logger.recordOutput("Intake/LowerSpeed", intakeLower.getEncoder().getVelocity() / Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM);
+    Logger.recordOutput("Intake/LowerSpeed", intakeLower.getEncoder().getVelocity());
     Logger.recordOutput("Intake/LowerCurrent", intakeLower.getOutputCurrent());
     Logger.recordOutput("Intake/LowerFault", intakeLower.getFaults());
     Logger.recordOutput("Intake/LowerStickyFault", intakeLower.getStickyFaults());
@@ -89,8 +89,8 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
   public void SetIntakeSpeed(double metersPerSecond)
   {
     Logger.recordOutput("Intake/Setpoint", metersPerSecond);
-    intakeUpper.getPIDController().setReference(metersPerSecond / Constants.IntakeConstants.VELOCITY_CONVERSION_TOP, CANSparkBase.ControlType.kVelocity);
-    intakeLower.getPIDController().setReference(metersPerSecond / Constants.IntakeConstants.VELOCITY_CONVERSION_BOTTOM, CANSparkBase.ControlType.kVelocity);
+    intakeUpper.getPIDController().setReference(metersPerSecond, CANSparkBase.ControlType.kVelocity);
+    intakeLower.getPIDController().setReference(metersPerSecond, CANSparkBase.ControlType.kVelocity);
   }
   
   public Command SetIntakeSpeedCommand(DoubleSupplier metersPerSecondSupplier)

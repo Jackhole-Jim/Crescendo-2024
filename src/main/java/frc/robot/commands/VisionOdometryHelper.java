@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -43,9 +44,9 @@ public class VisionOdometryHelper extends Command {
         {
           add(new PhotonPoseEstimator(
               AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+              PoseStrategy.LOWEST_AMBIGUITY,
               new PhotonCamera("BackAprilTagCamera"),
-              new Transform3d(new Translation3d(-0.14605, 0.2286, 0.635), new Rotation3d(0, -0.785398, Math.PI))
+              new Transform3d(new Translation3d(-0.14605, -0.2286, 0.635), new Rotation3d(0, -0.785398, Math.PI))
             )
           );
           // add(new PhotonPoseEstimator(
@@ -78,53 +79,56 @@ public class VisionOdometryHelper extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    getEstimatedGlobalPoses(mDrivetrainSubsystem.getPoseCopy())
-      .forEach(y -> 
-          y.ifPresentOrElse((EstimatedRobotPose pose) -> {
-            // mDrivetrainSubsystem.resetPose(estimateCurrentPoseFromPastPose(pose.estimatedPose.toPose2d(),
-            // pose.timestampSeconds, mDrivetrainSubsystem.getPrevTransforms()));
-            double averageDistanceToTarget = pose.targetsUsed
-              .stream()
-              .map(x -> x.getBestCameraToTarget().getTranslation())
-              .mapToDouble(Translation3d::getNorm)
-              .average()
-              .getAsDouble();
-            double averageAmbiguity = pose.targetsUsed
-              .stream()
-              .mapToDouble(x -> x.getPoseAmbiguity())
-              .average()
-              .getAsDouble();
+    // if(DriverStation.isTeleopEnabled())
+    // {
+      getEstimatedGlobalPoses(mDrivetrainSubsystem.getPoseCopy())
+        .forEach(y -> 
+            y.ifPresentOrElse((EstimatedRobotPose pose) -> {
+              // mDrivetrainSubsystem.resetPose(estimateCurrentPoseFromPastPose(pose.estimatedPose.toPose2d(),
+              // pose.timestampSeconds, mDrivetrainSubsystem.getPrevTransforms()));
+              double averageDistanceToTarget = pose.targetsUsed
+                .stream()
+                .map(x -> x.getBestCameraToTarget().getTranslation())
+                .mapToDouble(Translation3d::getNorm)
+                .average()
+                .getAsDouble();
+              double averageAmbiguity = pose.targetsUsed
+                .stream()
+                .mapToDouble(x -> x.getPoseAmbiguity())
+                .average()
+                .getAsDouble();
 
-            Logger.recordOutput("Vision/averageDistanceToTarget", averageDistanceToTarget);
-            Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguity);
-            // double poseSTD =
-            // interp.get(averageDistanceToTarget)/Math.pow(pose.targetsUsed.size(), 3);
-            double poseSTD = (xyStdDevCoefficient * Math.pow(averageDistanceToTarget, 2)) 
-              * (1 / pose.targetsUsed.size())
-              * (averageAmbiguity * 10);
-          
-            mDrivetrainSubsystem.addVisionMeasurement(
-              pose.estimatedPose.toPose2d(), 
-              pose.timestampSeconds,
-              VecBuilder.fill(poseSTD, poseSTD, 9)
-            );
-            // SmartDashboard.putNumber("Pose updated", pose.timestampSeconds);
-            Logger.recordOutput("Vision/VisionOdometry", pose.estimatedPose.toPose2d());
-            Logger.recordOutput("Vision/VisionTargets", pose.targetsUsed
-              .stream()
-              .map(x -> photonPoseEstimators.get(0).getFieldTags().getTagPose(x.getFiducialId()))
-              .toList()
-              .toArray(new Pose3d[pose.targetsUsed.size()])
-            );
-          },
-          () -> {
-            Logger.recordOutput("Vision/VisionOdometry", new Pose2d());
-            Logger.recordOutput("Vision/VisionTargets", new Pose3d[0]);
-            Logger.recordOutput("Vision/averageDistanceToTarget", 0);
-            Logger.recordOutput("Vision/averageAmbiguity", 0);
-          }
-        )
-      );
+              Logger.recordOutput("Vision/averageDistanceToTarget", averageDistanceToTarget);
+              Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguity);
+              // double poseSTD =
+              // interp.get(averageDistanceToTarget)/Math.pow(pose.targetsUsed.size(), 3);
+              double poseSTD = (xyStdDevCoefficient * Math.pow(averageDistanceToTarget, 2)) 
+                * (1 / pose.targetsUsed.size())
+                * (averageAmbiguity * 10);
+            
+              mDrivetrainSubsystem.addVisionMeasurement(
+                pose.estimatedPose.toPose2d(), 
+                pose.timestampSeconds,
+                VecBuilder.fill(poseSTD, poseSTD, Double.MAX_VALUE)
+              );
+              // SmartDashboard.putNumber("Pose updated", pose.timestampSeconds);
+              Logger.recordOutput("Vision/VisionOdometry", pose.estimatedPose.toPose2d());
+              Logger.recordOutput("Vision/VisionTargets", pose.targetsUsed
+                .stream()
+                .map(x -> photonPoseEstimators.get(0).getFieldTags().getTagPose(x.getFiducialId()).get())
+                .toList()
+                .toArray(new Pose3d[0])
+              );
+            },
+            () -> {
+              Logger.recordOutput("Vision/VisionOdometry", new Pose2d());
+              Logger.recordOutput("Vision/VisionTargets", new Pose3d[0]);
+              Logger.recordOutput("Vision/averageDistanceToTarget", 0);
+              Logger.recordOutput("Vision/averageAmbiguity", 0);
+            }
+          )
+        );
+    // }
   }
 
   // Called once the command ends or is interrupted.
