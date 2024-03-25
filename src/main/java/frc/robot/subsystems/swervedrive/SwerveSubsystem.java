@@ -26,6 +26,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -60,7 +61,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public double maximumSpeed = Units.feetToMeters(16.6);
 
-  public final SwerveDrivePoseEstimator swerveDrivePoseEstimatorCopy;
+  // public final SwerveDrivePoseEstimator swerveDrivePoseEstimatorCopy;
 
   private double maxAngleI = 0.0;
   /**
@@ -99,15 +100,15 @@ public class SwerveSubsystem extends SubsystemBase
 
     maxAngleI = swerveDrive.swerveDriveConfiguration.modules[0].configuration.anglePIDF.i;
 
-    swerveDrivePoseEstimatorCopy =
-    new SwerveDrivePoseEstimator(
-        swerveDrive.kinematics,
-        swerveDrive.getYaw(),
-        swerveDrive.getModulePositions(),
-        new Pose2d(
-            new Translation2d(0, 0),
-            Rotation2d.fromDegrees(
-                0)));
+    // swerveDrivePoseEstimatorCopy =
+    // new SwerveDrivePoseEstimator(
+    //     swerveDrive.kinematics,
+    //     swerveDrive.getYaw(),
+    //     swerveDrive.getModulePositions(),
+    //     new Pose2d(
+    //         new Translation2d(0, 0),
+    //         Rotation2d.fromDegrees(
+    //             0)));
 
     setupPathPlanner();
   }
@@ -122,15 +123,15 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
 
-    swerveDrivePoseEstimatorCopy =
-    new SwerveDrivePoseEstimator(
-        swerveDrive.kinematics,
-        swerveDrive.getYaw(),
-        swerveDrive.getModulePositions(),
-        new Pose2d(
-            new Translation2d(0, 0),
-            Rotation2d.fromDegrees(
-                0)));
+    // swerveDrivePoseEstimatorCopy =
+    // new SwerveDrivePoseEstimator(
+    //     swerveDrive.kinematics,
+    //     swerveDrive.getYaw(),
+    //     swerveDrive.getModulePositions(),
+    //     new Pose2d(
+    //         new Translation2d(0, 0),
+    //         Rotation2d.fromDegrees(
+    //             0)));
   }
 
   /**
@@ -275,13 +276,32 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(),
+      driveDriverStationCorrcted(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(),
                                           translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
                         angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
                         true,
-                        false);
+                        false
+      );
     });
   }
+
+  public void driveDriverStationCorrcted(
+    Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+    // Creates a robot-relative ChassisSpeeds object, converting from field-relative speeds if
+    // necessary.
+    ChassisSpeeds velocity =
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                translation.getX(), 
+                translation.getY(), 
+                rotation, 
+                (DriverStation.getAlliance().get() == Alliance.Red ? swerveDrive.getOdometryHeading().rotateBy(new Rotation2d(Math.PI)) : swerveDrive.getOdometryHeading()) 
+              )
+            : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
+
+    swerveDrive.drive(velocity, isOpenLoop, new Translation2d());
+  }
+
 
   /**
    * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
@@ -369,8 +389,8 @@ public class SwerveSubsystem extends SubsystemBase
       Util.LogCANSparkMax("Drive/module" + module.moduleNumber + "/drive", (CANSparkMax)module.getDriveMotor().getMotor());
     }
 
-    swerveDrivePoseEstimatorCopy.update(swerveDrive.getYaw(), swerveDrive.getModulePositions());
-    Logger.recordOutput("Drive/DrivePoseCopy", swerveDrivePoseEstimatorCopy.getEstimatedPosition());
+    // swerveDrivePoseEstimatorCopy.update(swerveDrive.getYaw(), swerveDrive.getModulePositions());
+    // Logger.recordOutput("Drive/DrivePoseCopy", swerveDrivePoseEstimatorCopy.getEstimatedPosition());
   }
 
   @Override
@@ -399,7 +419,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
 
-    swerveDrivePoseEstimatorCopy.resetPosition(swerveDrive.getYaw(), swerveDrive.getModulePositions(), initialHolonomicPose);
+    // swerveDrivePoseEstimatorCopy.resetPosition(swerveDrive.getYaw(), swerveDrive.getModulePositions(), initialHolonomicPose);
   }
 
   /**
@@ -412,10 +432,10 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive.getPose();
   }
 
-  public Pose2d getPoseCopy()
-  {
-    return swerveDrivePoseEstimatorCopy.getEstimatedPosition();
-  }
+  // public Pose2d getPoseCopy()
+  // {
+  //   return swerveDrivePoseEstimatorCopy.getEstimatedPosition();
+  // }
 
   /**
    * Set chassis speeds with closed-loop velocity control.

@@ -65,16 +65,11 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Intake/UpperSpeed", intakeUpper.getEncoder().getVelocity());
-    Logger.recordOutput("Intake/UpperCurrent", intakeUpper.getOutputCurrent());
-    Logger.recordOutput("Intake/UpperFault", intakeUpper.getFaults());
-    Logger.recordOutput("Intake/UpperStickyFault", intakeUpper.getStickyFaults());
-    Logger.recordOutput("Intake/LowerSpeed", intakeLower.getEncoder().getVelocity());
-    Logger.recordOutput("Intake/LowerCurrent", intakeLower.getOutputCurrent());
-    Logger.recordOutput("Intake/LowerFault", intakeLower.getFaults());
-    Logger.recordOutput("Intake/LowerStickyFault", intakeLower.getStickyFaults());
+    Util.LogCANSparkMax("Intake/IntakeUpper", intakeUpper);
+    Util.LogCANSparkMax("Intake/IntakeLower", intakeLower);
     Util.LogCANSparkMax("Intake/IntakeLeft", intakeLeft);
     Util.LogCANSparkMax("Intake/IntakeRight", intakeRight);
+    
     Logger.recordOutput("Intake/IsNotePresent", IsNotePresent());
     Logger.recordOutput("Intake/NoteBeamBreakValue", noteBeamBreak.getAverageVoltage());
     // SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));

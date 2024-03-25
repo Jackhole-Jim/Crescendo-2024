@@ -1,0 +1,617 @@
+{
+  "hubs": [
+    {
+      "x": -8,
+      "y": -8,
+      "width": 2576,
+      "height": 1416,
+      "state": {
+        "sidebar": {
+          "width": 300,
+          "expanded": [
+            "/RealOutputs",
+            "/RealOutputs/Drive/module3",
+            "/SystemStats/CANBus",
+            "/RealOutputs/LEDs",
+            "/RealOutputs/Vision",
+            "/SystemStats",
+            "/RealOutputs/Vision/VisionTargets",
+            "/RealOutputs/Climber"
+          ]
+        },
+        "tabs": {
+          "selected": 12,
+          "tabs": [
+            {
+              "type": 0,
+              "path": "../docs/INDEX.md"
+            },
+            {
+              "type": 7,
+              "uuid": "xc5vutf1qyxdqt2og9pfuwbf96xeijy3",
+              "fields": [],
+              "listFields": [],
+              "options": {},
+              "configHidden": false,
+              "visualizer": null,
+              "title": "Video"
+            },
+            {
+              "type": 8,
+              "uuid": "lhq1i7flt9y26besyvkd6if492nigoke",
+              "fields": [],
+              "listFields": [],
+              "options": {
+                "ids": [
+                  0,
+                  1,
+                  2
+                ],
+                "layouts": [
+                  "Xbox Controller (White)",
+                  "Xbox Controller (Blue)",
+                  "None"
+                ]
+              },
+              "configHidden": false,
+              "visualizer": null,
+              "title": "Joysticks"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/SystemStats/BatteryVoltage",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/SystemStats/CANBus/Utilization",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/PowerDistribution/TotalCurrent",
+                      "color": "#80588e",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": [
+                    {
+                      "key": "/SystemStats/BrownedOut",
+                      "color": "#af2437",
+                      "show": true
+                    }
+                  ]
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Battery Voltage and CAN Util"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/LoggedRobot/FullCycleMS",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/LoggedRobot/UserCodeMS",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/LoggedRobot/LogPeriodicMS",
+                      "color": "#af2437",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": []
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Code Cycle Speed"
+            },
+            {
+              "type": 3,
+              "field": "/RealOutputs/Console",
+              "title": "Console"
+            },
+            {
+              "type": 9,
+              "uuid": "p6wra94v1sdiai2twwee39k9u0ihukp6",
+              "fields": [
+                {
+                  "key": "/RealOutputs/Drive/desiredStates",
+                  "sourceTypeIndex": 0,
+                  "sourceType": 5
+                },
+                {
+                  "key": "/RealOutputs/Drive/measuredStates",
+                  "sourceTypeIndex": 0,
+                  "sourceType": 5
+                },
+                {
+                  "key": "/RealOutputs/Drive/robotRotation",
+                  "sourceTypeIndex": 0,
+                  "sourceType": 2
+                }
+              ],
+              "listFields": [],
+              "options": {
+                "maxSpeed": 4.5,
+                "rotationUnits": "degrees",
+                "arrangement": "0,1,2,3",
+                "sizeLeftRight": 0.65,
+                "sizeFrontBack": 0.65,
+                "forwardDirection": "up"
+              },
+              "configHidden": false,
+              "visualizer": null,
+              "title": "Swerve"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Drive/module0/driveTemp",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module1/driveTemp",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module2/driveTemp",
+                      "color": "#af2437",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module3/driveTemp",
+                      "color": "#80588e",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module0/driveCurrent",
+                      "color": "#e48b32",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module1/driveCurrent",
+                      "color": "#aacaee",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module2/driveCurrent",
+                      "color": "#c0b487",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Drive/module3/driveCurrent",
+                      "color": "#858584",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": []
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Swerve Temp and Current"
+            },
+            {
+              "type": 6,
+              "uuid": "4af8q7c0xv7w3icg5gyst3mvobk2oonh",
+              "fields": [],
+              "listFields": [
+                [
+                  {
+                    "type": "AprilTag 36h11",
+                    "key": "/RealOutputs/Vision/VisionTargets",
+                    "sourceTypeIndex": 2,
+                    "sourceType": "Pose3d[]"
+                  }
+                ],
+                [
+                  {
+                    "type": "Robot",
+                    "key": "/RealOutputs/Drive/DrivePose",
+                    "sourceTypeIndex": 1,
+                    "sourceType": "Pose2d"
+                  },
+                  {
+                    "type": "Green Ghost",
+                    "key": "/RealOutputs/Vision/VisionOdometry",
+                    "sourceTypeIndex": 1,
+                    "sourceType": "Pose2d"
+                  }
+                ]
+              ],
+              "options": {
+                "field": "2024 Field",
+                "alliance": "blue",
+                "robot": "2024 KitBot",
+                "unitDistance": "meters",
+                "unitRotation": "radians"
+              },
+              "configHidden": false,
+              "visualizer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  0.849886968008604,
+                  8.709786490061973,
+                  -10.301800712943592
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "title": "3D Field"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Intake/IntakeLeftCurrent",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeLeftVelocity",
+                      "color": "#af2437",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeLowerCurrent",
+                      "color": "#e48b32",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeLowerVelocity",
+                      "color": "#aacaee",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeRightCurrent",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeRightVelocity",
+                      "color": "#80588e",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeUpperCurrent",
+                      "color": "#c0b487",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeUpperVelocity",
+                      "color": "#858584",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/Setpoint",
+                      "color": "#d993aa",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Intake/IsNotePresent",
+                      "color": "#3b875a",
+                      "show": true
+                    }
+                  ]
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Intake"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/LEDs/LEDPercentage",
+                      "color": "#e5b31b",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/LEDs/LEDColor",
+                      "color": "#2b66a2",
+                      "show": true
+                    }
+                  ]
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "LEDs"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Shooter/Setpoint",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Shooter/ShooterVelocity",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Shooter/Shooter2Velocity",
+                      "color": "#af2437",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Shooter/IndexMotorVelocity",
+                      "color": "#80588e",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Shooter/ShooterCurrent",
+                      "color": "#aacaee",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Shooter/Shooter2Current",
+                      "color": "#c0b487",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Shooter/IndexMotorCurrent",
+                      "color": "#858584",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Shooter/IsAtSetpoint",
+                      "color": "#e48b32",
+                      "show": true
+                    }
+                  ]
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Shooter"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Climber/ClimberMotorAppliedOutput",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Climber/ClimberMotorPosition",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Climber/ClimberMotorCurrent",
+                      "color": "#af2437",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": []
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Climber"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "/RealOutputs/Whipper/actuatorLeftSet",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Whipper/actuatorRightSet",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Whipper/whipperMotorAppliedOutput",
+                      "color": "#af2437",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Whipper/whipperMotorCurrent",
+                      "color": "#80588e",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Whipper/whipperMotorVelocity",
+                      "color": "#e48b32",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": []
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Whipper"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [
+    {
+      "x": 2552,
+      "y": 342,
+      "width": 1936,
+      "height": 1056,
+      "state": {
+        "type": 6,
+        "visualizer": {
+          "cameraIndex": -1,
+          "orbitFov": 50,
+          "cameraPosition": [
+            -0.27036682886560104,
+            10.406670320027729,
+            -5.465761327531326
+          ],
+          "cameraTarget": [
+            0,
+            0.5,
+            0
+          ]
+        }
+      },
+      "uuid": "4af8q7c0xv7w3icg5gyst3mvobk2oonh"
+    }
+  ],
+  "version": "3.2.1"
+}

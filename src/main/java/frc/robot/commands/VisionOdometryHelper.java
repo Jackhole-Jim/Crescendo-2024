@@ -81,7 +81,7 @@ public class VisionOdometryHelper extends Command {
   public void execute() {
     // if(DriverStation.isTeleopEnabled())
     // {
-      getEstimatedGlobalPoses(mDrivetrainSubsystem.getPoseCopy())
+      getEstimatedGlobalPoses(mDrivetrainSubsystem.getPose())
         .forEach(y -> 
             y.ifPresentOrElse((EstimatedRobotPose pose) -> {
               // mDrivetrainSubsystem.resetPose(estimateCurrentPoseFromPastPose(pose.estimatedPose.toPose2d(),

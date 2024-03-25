@@ -32,6 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotor.burnFlash();
 
     shooterMotor2.restoreFactoryDefaults();
+    shooterMotor2.getEncoder().setVelocityConversionFactor(Constants.ShooterConstants.SHOOTER_GEARBOX_RATIO);
     shooterMotor2.follow(shooterMotor);
     shooterMotor2.burnFlash();
 
