@@ -22,6 +22,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,16 +46,23 @@ public class VisionOdometryHelper extends Command {
         {
           add(new PhotonPoseEstimator(
               AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-              PoseStrategy.LOWEST_AMBIGUITY,
+              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               new PhotonCamera("BackAprilTagCamera"),
               new Transform3d(new Translation3d(-0.14605, -0.2286, 0.635), new Rotation3d(0, -0.785398, Math.PI))
             )
           );
+          add(new PhotonPoseEstimator(
+              AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+              new PhotonCamera("AprilTagCameraLeft"),
+              new Transform3d(new Translation3d(0, 0.254, 0.2794), new Rotation3d(0.523599, 0, Math.PI/2))
+            )
+          );
           // add(new PhotonPoseEstimator(
-          //     AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField(),
-          //     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          //     new PhotonCamera("RightAprilTagCamera"),
-          //     new Transform3d(new Translation3d(-0.0508, -0.0508, 0.92075), new Rotation3d(0, 0, 0.523599))
+          //     AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+          //     PoseStrategy.LOWEST_AMBIGUITY,
+          //     new PhotonCamera("AprilTagCameraRight"),
+          //     new Transform3d(new Translation3d(0, -0.254, 0.2794), new Rotation3d(-0.523599, 0, -Math.PI/2))
           //   )
           // );
         }
@@ -121,10 +130,10 @@ public class VisionOdometryHelper extends Command {
               );
             },
             () -> {
-              Logger.recordOutput("Vision/VisionOdometry", new Pose2d());
-              Logger.recordOutput("Vision/VisionTargets", new Pose3d[0]);
-              Logger.recordOutput("Vision/averageDistanceToTarget", 0);
-              Logger.recordOutput("Vision/averageAmbiguity", 0);
+              // Logger.recordOutput("Vision/VisionOdometry", new Pose2d());
+              // Logger.recordOutput("Vision/VisionTargets", new Pose3d[0]);
+              // Logger.recordOutput("Vision/averageDistanceToTarget", 0);
+              // Logger.recordOutput("Vision/averageAmbiguity", 0);
             }
           )
         );

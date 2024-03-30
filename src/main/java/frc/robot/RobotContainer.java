@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -184,12 +185,20 @@ public class RobotContainer
         drivebase.driveToPose(
           (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES)
           .stream()
-          .min((pose1, pose2) -> { return (int)(pose1.getTranslation().getDistance(drivebase.getPose().getTranslation()) * 1000); })
+          .map((pose) -> new Pair<>(pose, drivebase.getPose()))
+          .min((posePair1, posePair2) -> { 
+            return (int)((posePair1.getFirst().getTranslation().getDistance(posePair1.getSecond().getTranslation())
+                    - posePair2.getFirst().getTranslation().getDistance(posePair2.getSecond().getTranslation()))
+                    * 1000); 
+          })
+          .map((posePair) -> posePair.getFirst())
           .get()
           // Constants.FieldConstants.BLUE_SHOOTING_POSES.get(0)
         )
       )
-    );
+      .andThen(NamedCommands.getCommand("ShootNote"))
+    )
+    .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
 
     m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
     m_driverController
