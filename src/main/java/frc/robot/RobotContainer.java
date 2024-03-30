@@ -8,9 +8,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -175,19 +178,29 @@ public class RobotContainer
         .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem))
         .alongWith(new VisionOdometryHelper(drivebase))
     );
-
-
+    
+    m_driverController.b().whileTrue(
+      new ExecuteTimeCommand( () ->
+        drivebase.driveToPose(
+          (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES)
+          .stream()
+          .min((pose1, pose2) -> { return (int)(pose1.getTranslation().getDistance(drivebase.getPose().getTranslation()) * 1000); })
+          .get()
+          // Constants.FieldConstants.BLUE_SHOOTING_POSES.get(0)
+        )
+      )
+    );
 
     m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
-    m_driverController
-      .rightBumper()
-      .whileTrue(NamedCommands.getCommand("ShootNote"))
-      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
     m_driverController
       .leftBumper()
       // .and(() -> !intakeSubsystem.IsNotePresent())
       .onTrue(NamedCommands.getCommand("IntakeNote"))
       .onFalse(NamedCommands.getCommand("StopIntake"));
+    m_driverController
+      .rightBumper()
+      .whileTrue(NamedCommands.getCommand("ShootNote"))
+      .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
       
     climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
       () -> m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()

@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.pathplanner.lib.util.GeometryUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -116,6 +122,22 @@ public final class Constants
   public static class FieldConstants {
     public static final Translation2d SPEAKER_POSE_BLUE = new Translation2d(0, 5.55);
     public static final Translation2d SPEAKER_POSE_RED = new Translation2d(16.52, 5.55);
+
+    public static final List<Pose2d> BLUE_SHOOTING_POSES = new ArrayList<>(){
+      {
+        add(new Pose2d(0.81, 6.63, Rotation2d.fromDegrees(60)));//amp side
+        add(new Pose2d(1.27, 5.55, Rotation2d.fromDegrees(0)));//center
+        add(new Pose2d(0.69, 4.43, Rotation2d.fromDegrees(-60)));//source side
+      }
+    };
+    
+    public static final List<Pose2d> RED_SHOOTING_POSES = new ArrayList<>(){
+      {
+        add(GeometryUtil.flipFieldPose(BLUE_SHOOTING_POSES.get(0)));//amp side
+        add(GeometryUtil.flipFieldPose(BLUE_SHOOTING_POSES.get(1)));//center
+        add(GeometryUtil.flipFieldPose(BLUE_SHOOTING_POSES.get(2)));//source side
+      }
+    };
   }
 
   public static class LEDConstants {
