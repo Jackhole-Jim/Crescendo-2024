@@ -32,7 +32,7 @@ public class PreSpoolShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(DriverStation.isTeleopEnabled() 
+    if((DriverStation.isTeleopEnabled() || DriverStation.isAutonomousEnabled())
         && mIntakeSubsystem.IsNotePresent() 
         && mShooterSubsystem.GetSetpoint() == 0
         && (
@@ -41,7 +41,7 @@ public class PreSpoolShooterCommand extends Command {
         )
     )
     {
-      mShooterSubsystem.StartShooterCommand(Constants.ShooterConstants.TELEOP_SPEAKER_PRE_SPOOL_SPEED_RPM).schedule();
+      mShooterSubsystem.StartShooterCommand(Constants.ShooterConstants.SPEAKER_PRE_SPOOL_SPEED_RPM).schedule();
     }
   }
 

@@ -3,8 +3,8 @@
     {
       "x": -8,
       "y": -8,
-      "width": 2576,
-      "height": 1416,
+      "width": 1552,
+      "height": 840,
       "state": {
         "sidebar": {
           "width": 300,
@@ -15,12 +15,12 @@
             "/RealOutputs/LEDs",
             "/RealOutputs/Vision",
             "/SystemStats",
-            "/RealOutputs/Vision/VisionTargets",
-            "/RealOutputs/Climber"
+            "/RealOutputs/Vision/VisionOdometry",
+            "/RealOutputs/Odometry"
           ]
         },
         "tabs": {
-          "selected": 12,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -80,7 +80,7 @@
                     },
                     {
                       "key": "/PowerDistribution/TotalCurrent",
-                      "color": "#80588e",
+                      "color": "#af2437",
                       "show": true
                     }
                   ]
@@ -89,7 +89,7 @@
                   "fields": [
                     {
                       "key": "/SystemStats/BrownedOut",
-                      "color": "#af2437",
+                      "color": "#80588e",
                       "show": true
                     }
                   ]
@@ -263,6 +263,12 @@
                     "key": "/RealOutputs/Vision/VisionTargets",
                     "sourceTypeIndex": 2,
                     "sourceType": "Pose3d[]"
+                  },
+                  {
+                    "type": "Vision Target",
+                    "key": "/RealOutputs/Vision/VisionTargets",
+                    "sourceTypeIndex": 2,
+                    "sourceType": "Pose3d[]"
                   }
                 ],
                 [
@@ -274,9 +280,33 @@
                   },
                   {
                     "type": "Green Ghost",
-                    "key": "/RealOutputs/Vision/VisionOdometry",
+                    "key": "/RealOutputs/Vision/VisionOdometry/0",
                     "sourceTypeIndex": 1,
                     "sourceType": "Pose2d"
+                  },
+                  {
+                    "type": "Red Ghost",
+                    "key": "/RealOutputs/Vision/VisionOdometry/1",
+                    "sourceTypeIndex": 1,
+                    "sourceType": "Pose2d"
+                  },
+                  {
+                    "type": "Blue Ghost",
+                    "key": "/RealOutputs/Vision/VisionOdometry/2",
+                    "sourceTypeIndex": 1,
+                    "sourceType": "Pose2d"
+                  },
+                  {
+                    "type": "Yellow Ghost",
+                    "key": "/RealOutputs/Odometry/TrajectorySetpoint",
+                    "sourceTypeIndex": 1,
+                    "sourceType": "Pose2d"
+                  },
+                  {
+                    "type": "Trajectory",
+                    "key": "/RealOutputs/Odometry/Trajectory",
+                    "sourceTypeIndex": 2,
+                    "sourceType": "Pose2d[]"
                   }
                 ]
               ],
@@ -292,9 +322,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  0.849886968008604,
-                  8.709786490061973,
-                  -10.301800712943592
+                  0.021350975897875202,
+                  9.714658438109975,
+                  -0.25880323737890926
                 ],
                 "cameraTarget": [
                   0,
@@ -317,32 +347,32 @@
                   "fields": [
                     {
                       "key": "/RealOutputs/Intake/IntakeLeftCurrent",
-                      "color": "#e5b31b",
-                      "show": true
-                    },
-                    {
-                      "key": "/RealOutputs/Intake/IntakeLeftVelocity",
-                      "color": "#af2437",
-                      "show": true
-                    },
-                    {
-                      "key": "/RealOutputs/Intake/IntakeLowerCurrent",
-                      "color": "#e48b32",
-                      "show": true
-                    },
-                    {
-                      "key": "/RealOutputs/Intake/IntakeLowerVelocity",
-                      "color": "#aacaee",
-                      "show": true
-                    },
-                    {
-                      "key": "/RealOutputs/Intake/IntakeRightCurrent",
                       "color": "#2b66a2",
                       "show": true
                     },
                     {
-                      "key": "/RealOutputs/Intake/IntakeRightVelocity",
+                      "key": "/RealOutputs/Intake/IntakeLeftVelocity",
+                      "color": "#e5b31b",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeLowerCurrent",
+                      "color": "#af2437",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeLowerVelocity",
                       "color": "#80588e",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeRightCurrent",
+                      "color": "#e48b32",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IntakeRightVelocity",
+                      "color": "#aacaee",
                       "show": true
                     },
                     {
@@ -357,7 +387,7 @@
                     },
                     {
                       "key": "/RealOutputs/Intake/Setpoint",
-                      "color": "#d993aa",
+                      "color": "#3b875a",
                       "show": true
                     }
                   ]
@@ -366,7 +396,7 @@
                   "fields": [
                     {
                       "key": "/RealOutputs/Intake/IsNotePresent",
-                      "color": "#3b875a",
+                      "color": "#d993aa",
                       "show": true
                     }
                   ]
@@ -395,7 +425,7 @@
                   "fields": [
                     {
                       "key": "/RealOutputs/LEDs/LEDPercentage",
-                      "color": "#e5b31b",
+                      "color": "#2b66a2",
                       "show": true
                     }
                   ]
@@ -404,7 +434,7 @@
                   "fields": [
                     {
                       "key": "/RealOutputs/LEDs/LEDColor",
-                      "color": "#2b66a2",
+                      "color": "#e5b31b",
                       "show": true
                     }
                   ]
@@ -453,17 +483,17 @@
                     },
                     {
                       "key": "/RealOutputs/Shooter/ShooterCurrent",
-                      "color": "#aacaee",
+                      "color": "#e48b32",
                       "show": true
                     },
                     {
                       "key": "/RealOutputs/Shooter/Shooter2Current",
-                      "color": "#c0b487",
+                      "color": "#aacaee",
                       "show": true
                     },
                     {
                       "key": "/RealOutputs/Shooter/IndexMotorCurrent",
-                      "color": "#858584",
+                      "color": "#c0b487",
                       "show": true
                     }
                   ]
@@ -472,7 +502,12 @@
                   "fields": [
                     {
                       "key": "/RealOutputs/Shooter/IsAtSetpoint",
-                      "color": "#e48b32",
+                      "color": "#858584",
+                      "show": true
+                    },
+                    {
+                      "key": "/RealOutputs/Intake/IsNotePresent",
+                      "color": "#3b875a",
                       "show": true
                     }
                   ]
@@ -587,31 +622,6 @@
       }
     }
   ],
-  "satellites": [
-    {
-      "x": 2552,
-      "y": 342,
-      "width": 1936,
-      "height": 1056,
-      "state": {
-        "type": 6,
-        "visualizer": {
-          "cameraIndex": -1,
-          "orbitFov": 50,
-          "cameraPosition": [
-            -0.27036682886560104,
-            10.406670320027729,
-            -5.465761327531326
-          ],
-          "cameraTarget": [
-            0,
-            0.5,
-            0
-          ]
-        }
-      },
-      "uuid": "4af8q7c0xv7w3icg5gyst3mvobk2oonh"
-    }
-  ],
+  "satellites": [],
   "version": "3.2.1"
 }

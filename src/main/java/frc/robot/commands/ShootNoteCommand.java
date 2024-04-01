@@ -33,7 +33,7 @@ public class ShootNoteCommand extends SequentialCommandGroup {
       new WaitCommand(2)
         .raceWith(
           new WaitUntilCommand(() -> !intakeSubsystem.IsNotePresent())//keep shooting until note is no longer present + 0.5 seconds or timeout after 2 seconds
-          .andThen(new WaitCommand(0.5))
+          // .andThen(new WaitCommand(0.5))
         )
         .raceWith(//blink LEDs while note is shooting
           ledSubsystem.setPercentageLitCommand(0, Color.kGreen)

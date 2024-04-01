@@ -14,6 +14,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.estimation.TargetModel;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
@@ -55,16 +56,16 @@ public class VisionOdometryHelper extends Command {
               AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               new PhotonCamera("AprilTagCameraLeft"),
-              new Transform3d(new Translation3d(0, 0.254, 0.2794), new Rotation3d(0.523599, 0, Math.PI/2))
+              new Transform3d(new Translation3d(0, 0.254, 0.2794), new Rotation3d(0, 0.523599, Math.PI/2))
             )
           );
-          // add(new PhotonPoseEstimator(
-          //     AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-          //     PoseStrategy.LOWEST_AMBIGUITY,
-          //     new PhotonCamera("AprilTagCameraRight"),
-          //     new Transform3d(new Translation3d(0, -0.254, 0.2794), new Rotation3d(-0.523599, 0, -Math.PI/2))
-          //   )
-          // );
+          add(new PhotonPoseEstimator(
+              AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+              new PhotonCamera("AprilTagCameraRight"),
+              new Transform3d(new Translation3d(0, -0.254, 0.2794), new Rotation3d(0, -0.523599, -Math.PI/2))
+            )
+          );
         }
       };
       photonPoseEstimators.forEach(x -> {
@@ -90,6 +91,11 @@ public class VisionOdometryHelper extends Command {
   public void execute() {
     // if(DriverStation.isTeleopEnabled())
     // {
+      List<Double> averageDistanceToTargetList = new ArrayList<>();
+      List<Double> averageAmbiguityList = new ArrayList<>();
+      List<PhotonTrackedTarget> trackedTargets = new ArrayList<>();
+      List<Pose2d> visionOdometryList = new ArrayList<>();
+
       getEstimatedGlobalPoses(mDrivetrainSubsystem.getPose())
         .forEach(y -> 
             y.ifPresentOrElse((EstimatedRobotPose pose) -> {
@@ -107,8 +113,10 @@ public class VisionOdometryHelper extends Command {
                 .average()
                 .getAsDouble();
 
-              Logger.recordOutput("Vision/averageDistanceToTarget", averageDistanceToTarget);
-              Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguity);
+              averageDistanceToTargetList.add(averageDistanceToTarget);
+              averageAmbiguityList.add(averageAmbiguity);
+              // Logger.recordOutput("Vision/averageDistanceToTarget", averageDistanceToTarget);
+              // Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguity);
               // double poseSTD =
               // interp.get(averageDistanceToTarget)/Math.pow(pose.targetsUsed.size(), 3);
               double poseSTD = (xyStdDevCoefficient * Math.pow(averageDistanceToTarget, 2)) 
@@ -120,16 +128,21 @@ public class VisionOdometryHelper extends Command {
                 pose.timestampSeconds,
                 VecBuilder.fill(poseSTD, poseSTD, Double.MAX_VALUE)
               );
+              visionOdometryList.add(pose.estimatedPose.toPose2d());
+              trackedTargets.addAll(pose.targetsUsed);
               // SmartDashboard.putNumber("Pose updated", pose.timestampSeconds);
-              Logger.recordOutput("Vision/VisionOdometry", pose.estimatedPose.toPose2d());
-              Logger.recordOutput("Vision/VisionTargets", pose.targetsUsed
-                .stream()
-                .map(x -> photonPoseEstimators.get(0).getFieldTags().getTagPose(x.getFiducialId()).get())
-                .toList()
-                .toArray(new Pose3d[0])
-              );
+              // Logger.recordOutput("Vision/VisionOdometry", pose.estimatedPose.toPose2d());
+                // .stream()
+                // .map(x -> photonPoseEstimators.get(0).getFieldTags().getTagPose(x.getFiducialId()).get())
+                // .toList()
+                // .toArray(new Pose3d[0])
+              // );
             },
             () -> {
+              
+              averageDistanceToTargetList.add(0.0);
+              averageAmbiguityList.add(0.0);
+              visionOdometryList.add(new Pose2d());
               // Logger.recordOutput("Vision/VisionOdometry", new Pose2d());
               // Logger.recordOutput("Vision/VisionTargets", new Pose3d[0]);
               // Logger.recordOutput("Vision/averageDistanceToTarget", 0);
@@ -137,6 +150,17 @@ public class VisionOdometryHelper extends Command {
             }
           )
         );
+
+        Logger.recordOutput("Vision/VisionTargets", trackedTargets
+          .stream()
+          .distinct()
+          .map(x -> photonPoseEstimators.get(0).getFieldTags().getTagPose(x.getFiducialId()).get())
+          .toList()
+          .toArray(Pose3d[]::new)
+        );
+        Logger.recordOutput("Vision/averageDistanceToTarget", averageDistanceToTargetList.stream().mapToDouble(x -> x).toArray());
+        Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguityList.stream().mapToDouble(x -> x).toArray());
+        Logger.recordOutput("Vision/VisionOdometry", visionOdometryList.toArray(Pose2d[]::new));
     // }
   }
 

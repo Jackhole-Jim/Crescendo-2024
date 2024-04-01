@@ -85,7 +85,7 @@ public class RobotContainer
   public RobotContainer()
   {
     registerAndNameCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
-    registerAndNameCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
+    // registerAndNameCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
     registerAndNameCommand("IntakeNote", 
       intakeSubsystem.SetIntakeSpeedCommand(
         () -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3//make it so our intake runs at 3x the surface speed of the robot in the forward direction

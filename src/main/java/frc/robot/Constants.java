@@ -92,15 +92,15 @@ public final class Constants
     public static final int INDEX_MOTOR_ID = 15;
     public static final double INDEX_RAMP_RATE = 0.1;
     public static final double SHOOTER_GEARBOX_RATIO = 1.33;
-    public static final double SHOOTER_SETPOINT_TOLERANCE = 400.0;
+    public static final double SHOOTER_SETPOINT_TOLERANCE = 700.0;
     
     public static final double SHOOTER_P = 0.00005;
     public static final double SHOOTER_D = 0.005;
     public static final double SHOOTER_FF = 0.0001351017500734888;
 
     public static final int SPEAKER_SHOOTING_SPEED_RPM = 6500;
-    public static final int AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM = 6000;
-    public static final int TELEOP_SPEAKER_PRE_SPOOL_SPEED_RPM = 3000;
+    // public static final int AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM = 6500;
+    public static final int SPEAKER_PRE_SPOOL_SPEED_RPM = 6500;
     public static final int AMP_SHOOTING_SPEED_RPM = 1000;
 
     public static final double PRE_SPOOL_DISTANCE_METERS = 5.0;
@@ -121,7 +121,7 @@ public final class Constants
 
   public static class FieldConstants {
     public static final Translation2d SPEAKER_POSE_BLUE = new Translation2d(0, 5.55);
-    public static final Translation2d SPEAKER_POSE_RED = new Translation2d(16.52, 5.55);
+    public static final Translation2d SPEAKER_POSE_RED = GeometryUtil.flipFieldPosition(SPEAKER_POSE_BLUE);
 
     public static final List<Pose2d> BLUE_SHOOTING_POSES = new ArrayList<>(){
       {
