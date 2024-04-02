@@ -54,4 +54,12 @@ public class PreSpoolShooterCommand extends Command {
   public boolean isFinished() {
     return false;
   }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    // TODO Auto-generated method stub
+    return true;
+  }
+
+  
 }
