@@ -18,6 +18,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "PreSpoolHelper"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Approach Source Note From Source"

@@ -106,6 +106,8 @@ public class RobotContainer
     );
     registerAndNameCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
     registerAndNameCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
+    registerAndNameCommand("PreSpoolHelper", new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem));
+    registerAndNameCommand("VisionOdometryHelper", new VisionOdometryHelper(drivebase));
 
     // Configure the trigger bindings
     
@@ -176,8 +178,8 @@ public class RobotContainer
 
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
-        .alongWith(new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem))
-        .alongWith(new VisionOdometryHelper(drivebase))
+        .alongWith(NamedCommands.getCommand("PreSpoolHelper"))
+        .alongWith(NamedCommands.getCommand("VisionOdometryHelper"))
     );
     
     m_driverController.b().whileTrue(
