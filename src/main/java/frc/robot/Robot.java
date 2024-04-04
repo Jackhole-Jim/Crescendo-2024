@@ -61,7 +61,7 @@ public class Robot extends LoggedRobot
   {
     // RobotController.setBrownoutVoltage(6.0);
 
-    Logger.addDataReceiver(new NT4Publisher()); 
+    // Logger.addDataReceiver(new NT4Publisher()); 
     Logger.addDataReceiver(new WPILOGWriter());
     Logger.start();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our

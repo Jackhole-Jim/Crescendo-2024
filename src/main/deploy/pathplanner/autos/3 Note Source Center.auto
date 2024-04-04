@@ -18,12 +18,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "PreSpoolHelper"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Approach Source Note From Source"
@@ -69,6 +63,19 @@
           "type": "named",
           "data": {
             "name": "ShootNote"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "PreSpoolHelper"
+                }
+              }
+            ]
           }
         }
       ]
