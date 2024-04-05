@@ -12,67 +12,81 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Approach Source Note From Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Shooting Source Source Approach"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopDrivetrain"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Approach Center Source Note From Source"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Shooting Source Center Approach"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopDrivetrain"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootNote"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "PreSpoolHelper"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ShootNote"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Approach Source Note From Source"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Shooting Source Source Approach"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "StopDrivetrain"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ShootNote"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Approach Center Source Note From Source"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Shooting Source Center Approach"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "StopDrivetrain"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ShootNote"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PreSpoolHelper"
+                      }
+                    }
+                  ]
                 }
               }
             ]

@@ -35,7 +35,7 @@ public class VisionOdometryHelper extends Command {
   private SwerveSubsystem mDrivetrainSubsystem;
   // private InterpolatingTreeMap<Double, Double> interp = new InterpolatingTreeMap<>();
   private boolean errored = false;
-  private static final double xyStdDevCoefficient = 0.1;
+  private static final double xyStdDevCoefficient = 0.5;
   /** Creates a new VisionOdometryHelper. */
   public VisionOdometryHelper(SwerveSubsystem drivetrainSubsystem) {
     mDrivetrainSubsystem = drivetrainSubsystem;
@@ -56,7 +56,7 @@ public class VisionOdometryHelper extends Command {
               AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               new PhotonCamera("AprilTagCameraLeft"),
-              new Transform3d(new Translation3d(0, 0.254, 0.2794), new Rotation3d(0, 0.523599, Math.PI/2))
+              new Transform3d(new Translation3d(0, 0.254, 0.2794), new Rotation3d(0, -0.523599, Math.PI/2))
             )
           );
           add(new PhotonPoseEstimator(
@@ -119,8 +119,9 @@ public class VisionOdometryHelper extends Command {
               // Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguity);
               // double poseSTD =
               // interp.get(averageDistanceToTarget)/Math.pow(pose.targetsUsed.size(), 3);
-              double poseSTD = (xyStdDevCoefficient * Math.pow(averageDistanceToTarget, 2)) 
-                * (1 / pose.targetsUsed.size())
+              double poseSTD = xyStdDevCoefficient 
+                * Math.pow(averageDistanceToTarget, 2)
+                * (1 / Math.pow(pose.targetsUsed.size(), 3))
                 * (averageAmbiguity * 10);
             
               mDrivetrainSubsystem.addVisionMeasurement(
