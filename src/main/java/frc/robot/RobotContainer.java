@@ -229,9 +229,9 @@ public class RobotContainer
     ));
     ampWhipperSubsystem.setDefaultCommand(
       ampWhipperSubsystem.setWhipperSpeed(
-        () -> ampWhipperSubsystem.IsWhipperExtended() 
-                ? -MathUtil.applyDeadband(m_operatorController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) 
-                : 0
+        () -> //ampWhipperSubsystem.IsWhipperExtended() 
+               /* ?*/ -MathUtil.applyDeadband(m_operatorController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) 
+                // : 0
       )
     );
     m_operatorController.y().onTrue(ampWhipperSubsystem.extendActuators());
