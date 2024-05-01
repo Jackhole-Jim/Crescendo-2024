@@ -120,15 +120,15 @@ public class VisionOdometryHelper extends Command {
               // double poseSTD =
               // interp.get(averageDistanceToTarget)/Math.pow(pose.targetsUsed.size(), 3);
               double poseSTD = xyStdDevCoefficient 
-                * Math.pow(averageDistanceToTarget, 2)
-                * (1 / Math.pow(pose.targetsUsed.size(), 3))
+                * Math.pow(averageDistanceToTarget, 3)
+                * (1 / Math.pow(pose.targetsUsed.size() * 3, 3))
                 * (averageAmbiguity * 10);
             
-              mDrivetrainSubsystem.addVisionMeasurement(
-                pose.estimatedPose.toPose2d(), 
-                pose.timestampSeconds,
-                VecBuilder.fill(poseSTD, poseSTD, Double.MAX_VALUE)
-              );
+              // mDrivetrainSubsystem.addVisionMeasurement(
+              //   pose.estimatedPose.toPose2d(), 
+              //   pose.timestampSeconds,
+              //   VecBuilder.fill(poseSTD, poseSTD, Double.MAX_VALUE)
+              // );
               visionOdometryList.add(pose.estimatedPose.toPose2d());
               trackedTargets.addAll(pose.targetsUsed);
               // SmartDashboard.putNumber("Pose updated", pose.timestampSeconds);
@@ -162,6 +162,12 @@ public class VisionOdometryHelper extends Command {
         Logger.recordOutput("Vision/averageDistanceToTarget", averageDistanceToTargetList.stream().mapToDouble(x -> x).toArray());
         Logger.recordOutput("Vision/averageAmbiguity", averageAmbiguityList.stream().mapToDouble(x -> x).toArray());
         Logger.recordOutput("Vision/VisionOdometry", visionOdometryList.toArray(Pose2d[]::new));
+        Logger.recordOutput("Vision/CameraPositions", 
+          photonPoseEstimators
+          .stream()
+          .map(x -> new Pose3d(mDrivetrainSubsystem.getPose()).plus(x.getRobotToCameraTransform()))
+          .toArray(Pose3d[]::new)
+        );
     // }
   }
 

@@ -21,6 +21,15 @@ public class ExecuteTimeCommand extends Command {
 
 
     @Override
+    public void end(boolean interrupted) {
+        // TODO Auto-generated method stub
+        if(interrupted)
+        {
+            mCommand.cancel();
+        }
+    }
+
+    @Override
     public boolean isFinished() {
         // TODO Auto-generated method stub
         return mCommand.isFinished();

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,6 +31,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Util.NoteSimulator;
+import frc.robot.commands.GamePieceGuider;
 import frc.robot.commands.PreSpoolShooterCommand;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.StopDriveTrainCommand;
@@ -93,6 +96,7 @@ public class RobotContainer
       .onlyWhile(() -> !intakeSubsystem.IsNotePresent())
       .andThen(intakeSubsystem.StopIntakeCommand())
       .andThen(new InstantCommand(() -> intakeBlinkCounter = 0))
+      .andThen(new InstantCommand(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))
       .andThen(
         ledSubsystem.setPercentageLitCommand(1, Color.kOrange)
         .andThen(new WaitCommand(0.1))
@@ -103,8 +107,12 @@ public class RobotContainer
         .until(() -> intakeBlinkCounter >= 4)
       )
       .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
+      .andThen(new InstantCommand(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
     );
-    registerAndNameCommand("StopIntake", intakeSubsystem.StopIntakeCommand());
+    registerAndNameCommand("StopIntake", 
+      intakeSubsystem.StopIntakeCommand()
+      .andThen(new InstantCommand(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
+    );
     registerAndNameCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
     registerAndNameCommand("PreSpoolHelper", new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem));
     registerAndNameCommand("VisionOdometryHelper", new VisionOdometryHelper(drivebase));
@@ -169,17 +177,19 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
-        () -> scaleJoystick(-m_driverController.getRightX(), 2));
+        () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), 2));
 
     Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
-        () -> scaleJoystick(-m_driverController.getRightX(), 2));
+        () -> scaleJoystick(-m_driverController.getRightX(), 2))
+        .alongWith(new NoteSimulator(() -> drivebase.getPose()));
 
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
         .alongWith(NamedCommands.getCommand("PreSpoolHelper"))
         .alongWith(NamedCommands.getCommand("VisionOdometryHelper"))
+        .alongWith(new GamePieceGuider(drivebase))
     );
     
     m_driverController.b().whileTrue(
