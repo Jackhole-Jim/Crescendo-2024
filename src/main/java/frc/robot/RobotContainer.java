@@ -68,7 +68,7 @@ public class RobotContainer
 
   private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(() -> drivebase.getPose());
 
   private final AmpWhipperSubsystem ampWhipperSubsystem = new AmpWhipperSubsystem();
 
@@ -79,6 +79,8 @@ public class RobotContainer
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
+  private final NoteSimulator noteSimulator = new NoteSimulator(() -> drivebase.getPose(), () -> intakeSubsystem.GetSetPoint() > 0, () -> shooterSubsystem.GetIndexSetpoint() > 0);
+
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private int intakeBlinkCounter = 0;
@@ -87,7 +89,7 @@ public class RobotContainer
    */
   public RobotContainer()
   {
-    registerAndNameCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM));
+    registerAndNameCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()));
     // registerAndNameCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
     registerAndNameCommand("IntakeNote", 
       intakeSubsystem.SetIntakeSpeedCommand(
@@ -183,11 +185,11 @@ public class RobotContainer
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
         () -> scaleJoystick(-m_driverController.getRightX(), 2))
-        .alongWith(new NoteSimulator(() -> drivebase.getPose()));
+        .alongWith(noteSimulator);
 
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
-        .alongWith(NamedCommands.getCommand("PreSpoolHelper"))
+        // .alongWith(NamedCommands.getCommand("PreSpoolHelper"))
         .alongWith(NamedCommands.getCommand("VisionOdometryHelper"))
         .alongWith(new GamePieceGuider(drivebase))
     );
@@ -248,10 +250,12 @@ public class RobotContainer
     m_operatorController.a().onTrue(ampWhipperSubsystem.retractActuators());
     m_operatorController
       .rightBumper()
-      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM))
+      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.AMP_SHOOTING_SPEED_RPM, () -> drivebase.getPose()))
       .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
     
 
+
+    intakeSubsystem.SetBeamBreakSimulator(noteSimulator.noteBeamBreakSimulation());
     // SmartDashboard.putNumber("IntakeSpeed", 0);
     // m_driverController.b().onTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> SmartDashboard.getNumber("IntakeSpeed", 0)));
   }

@@ -20,6 +20,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.ShooterConstants.SHOOTER_MOTOR_ID2, MotorType.kBrushless);
   private final CANSparkMax indexMotor = new CANSparkMax(Constants.ShooterConstants.INDEX_MOTOR_ID, MotorType.kBrushless); 
   private int shooterSetpoint = 0;
+  private double indexSetpoint = 0.0;
 
   public ShooterSubsystem() {
     shooterMotor.restoreFactoryDefaults();
@@ -56,12 +57,14 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command StartIndexMotor(){
     return runOnce(()-> {
       indexMotor.set(1);
+      indexSetpoint = 1.0;
     });
   }
 
   public Command StopIndexMotor(){
     return runOnce(()-> {
       indexMotor.set(0);
+      indexSetpoint = 0.0;
     });
   }
 
@@ -94,6 +97,11 @@ public class ShooterSubsystem extends SubsystemBase {
   public int GetSetpoint()
   {
     return shooterSetpoint;
+  }
+
+  public double GetIndexSetpoint()
+  {
+    return indexSetpoint;
   }
 
   public double GetRPM()

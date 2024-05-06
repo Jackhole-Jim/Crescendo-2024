@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -13,8 +14,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,8 +32,15 @@ private final CANSparkMax intakeLeft = new CANSparkMax(Constants.IntakeConstants
 private final CANSparkMax intakeRight = new CANSparkMax(Constants.IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
 private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConstants.NOTE_BEAM_BREAK_CHANNEL);
+
+private Supplier<Boolean> mBeamBreakSimulator;
+private Supplier<Pose2d> mRobotPoseSupplier;
+
+private double setPoint = 0.0;
   /** Creates a new IntakeSubsystem. */
-  public IntakeSubsystem() {
+  public IntakeSubsystem(Supplier<Pose2d> robotPoseSupplier) {
+    mRobotPoseSupplier = robotPoseSupplier;
+
     CANSparkBase.enableExternalUSBControl(true);
     intakeUpper.restoreFactoryDefaults();
     intakeUpper.getPIDController().setP(0);
@@ -74,6 +85,15 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
     Logger.recordOutput("Intake/NoteBeamBreakValue", noteBeamBreak.getAverageVoltage());
     // SmartDashboard.putNumber("IntakeSpeed2", SmartDashboard.getNumber("IntakeSpeed", 0));
     // This method will be called once per scheduler run
+
+    if(this.IsNotePresent())
+    {
+      Logger.recordOutput("Intake/NoteInRobot", new Pose3d(mRobotPoseSupplier.get()).transformBy(Constants.IntakeConstants.INDEXER_NOTE_TRANSFORM));
+    }
+    else
+    {
+      Logger.recordOutput("Intake/NoteInRobot", new Pose3d());
+    }
   }
 
   // private void SetIntakeSpeed (double speed){
@@ -83,6 +103,7 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
 
   public void SetIntakeSpeed(double metersPerSecond)
   {
+    setPoint = metersPerSecond;
     Logger.recordOutput("Intake/Setpoint", metersPerSecond);
     intakeUpper.getPIDController().setReference(metersPerSecond, CANSparkBase.ControlType.kVelocity);
     intakeLower.getPIDController().setReference(metersPerSecond, CANSparkBase.ControlType.kVelocity);
@@ -105,6 +126,7 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
   public void StopIntake()
   {
     Logger.recordOutput("Intake/Setpoint", 0);
+    setPoint = 0.0;
     intakeUpper.getPIDController().setReference(0, CANSparkMax.ControlType.kVoltage);
     intakeLower.getPIDController().setReference(0, CANSparkMax.ControlType.kVoltage);
   }
@@ -117,6 +139,23 @@ private final AnalogInput noteBeamBreak = new AnalogInput(Constants.IntakeConsta
 
   public boolean IsNotePresent()
   {
-    return noteBeamBreak.getAverageVoltage() < Constants.IntakeConstants.NOTE_BEAM_BREAK_VOLTAGE_THRESHOLD;//beam break is active low
+    if(RobotBase.isSimulation())
+    {
+      return this.mBeamBreakSimulator.get();
+    }
+    else
+    {
+      return noteBeamBreak.getAverageVoltage() < Constants.IntakeConstants.NOTE_BEAM_BREAK_VOLTAGE_THRESHOLD;//beam break is active low\
+    }
+  }
+
+  public double GetSetPoint()
+  {
+    return setPoint;
+  }
+
+  public void SetBeamBreakSimulator(Supplier<Boolean> simulator)
+  {
+    this.mBeamBreakSimulator = simulator;
   }
 }

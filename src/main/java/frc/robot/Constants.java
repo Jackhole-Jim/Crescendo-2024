@@ -11,6 +11,8 @@ import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -84,6 +86,8 @@ public final class Constants
     public static final int NOTE_BEAM_BREAK_CHANNEL = 0;
 
     public static final double NOTE_BEAM_BREAK_VOLTAGE_THRESHOLD = 1.0;
+
+    public static final Transform3d INDEXER_NOTE_TRANSFORM = new Transform3d(-0.05, 0, 0.36, new Rotation3d(0.0, Units.degreesToRadians(55.0), 0.0));
   }
 
   public static class ShooterConstants {
@@ -104,6 +108,8 @@ public final class Constants
     public static final int AMP_SHOOTING_SPEED_RPM = 1000;
 
     public static final double PRE_SPOOL_DISTANCE_METERS = 5.0;
+
+    public static final double SHOOTER_SHOT_SPEED = 5.0; // Meters per sec
   }
 
   public static class WhipperConstants {
@@ -122,6 +128,8 @@ public final class Constants
   public static class FieldConstants {
     public static final Translation2d SPEAKER_POSE_BLUE = new Translation2d(0, 5.55);
     public static final Translation2d SPEAKER_POSE_RED = GeometryUtil.flipFieldPosition(SPEAKER_POSE_BLUE);
+    public static final Translation3d BLUE_SPEAKER_GOAL = new Translation3d(0.225, 5.55, 2.1);
+    public static final Translation3d RED_SPEAKER_GOAL = new Translation3d(16.317, 5.55, 2.1);
 
     public static final List<Pose2d> BLUE_SHOOTING_POSES = new ArrayList<>(){
       {
