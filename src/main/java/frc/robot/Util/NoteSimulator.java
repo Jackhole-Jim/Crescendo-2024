@@ -46,19 +46,19 @@ public class NoteSimulator extends Command {
 
     private List<Pose3d> noteLocations = new ArrayList<>(){
       {
-        add(new Pose3d(2.9, 4.105 + 1.45 + 1.45, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(2.9, 4.105 + 1.45, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(2.9, 4.105, Units.inchesToMeters(1), new Rotation3d()));
+      //   add(Constants.FieldConstants.BLUE_1_NOTE);
+      //   add(Constants.FieldConstants.BLUE_2_NOTE);
+      //   add(Constants.FieldConstants.BLUE_3_NOTE);
 
-        add(new Pose3d(8.27, 4.105 + 1.68 + 1.68, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(8.27, 4.105 + 1.68, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(8.27, 4.105, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(8.27, 4.105 - 1.68, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(8.27, 4.105 - 1.68 - 1.68, Units.inchesToMeters(1), new Rotation3d()));
+        add(Constants.FieldConstants.CENTER_1_NOTE);
+        add(Constants.FieldConstants.CENTER_2_NOTE);
+        // add(Constants.FieldConstants.CENTER_3_NOTE);
+        // add(Constants.FieldConstants.CENTER_4_NOTE);
+        // add(Constants.FieldConstants.CENTER_5_NOTE);
 
-        add(new Pose3d(13.64, 4.105 + 1.45 + 1.45, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(13.64, 4.105 + 1.45, Units.inchesToMeters(1), new Rotation3d()));
-        add(new Pose3d(13.64, 4.105, Units.inchesToMeters(1), new Rotation3d()));
+        // add(Constants.FieldConstants.RED_1_NOTE);
+        // add(Constants.FieldConstants.RED_2_NOTE);
+        // add(Constants.FieldConstants.RED_3_NOTE);
       }
     };
 
@@ -91,7 +91,7 @@ public class NoteSimulator extends Command {
                 * 1000); 
       })
       .map((posePair) -> posePair.getFirst())
-      .get();
+      .orElseGet(() -> new Pose3d());
 
     double closestNoteToIntakeDist = intakeSpot.getTranslation().getDistance(closestNote.getTranslation());
 
@@ -161,5 +161,11 @@ public class NoteSimulator extends Command {
     return false;
   }
 
+  @Override
+  public boolean runsWhenDisabled(){
+    return true;
+  }
+olean isFinished() {
+    return false;
+  }
 
-}

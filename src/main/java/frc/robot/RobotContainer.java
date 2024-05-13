@@ -41,6 +41,7 @@ import frc.robot.commands.VisionOdometryHelper;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.AmpWhipperSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.GamePieceVisionSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -76,10 +77,10 @@ public class RobotContainer
 
   private final LEDSubsystem ledSubsystem = new LEDSubsystem();
 
+  private final GamePieceVisionSubsystem gamePieceVisionSubsystem = new GamePieceVisionSubsystem(() -> drivebase.getPose());
+
   private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
-
-  private final NoteSimulator noteSimulator = new NoteSimulator(() -> drivebase.getPose(), () -> intakeSubsystem.GetSetPoint() > 0, () -> shooterSubsystem.GetIndexSetpoint() > 0);
 
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -119,6 +120,17 @@ public class RobotContainer
     registerAndNameCommand("PreSpoolHelper", new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem));
     registerAndNameCommand("VisionOdometryHelper", new VisionOdometryHelper(drivebase));
 
+    // registerAndNameCommand("IntakeBlueNote1", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.BLUE_1_NOTE));
+    // registerAndNameCommand("IntakeBlueNote2", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.BLUE_2_NOTE));
+    // registerAndNameCommand("IntakeBlueNote3", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.BLUE_3_NOTE));
+    registerAndNameCommand("IntakeCenterNote1", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_1_NOTE));
+    registerAndNameCommand("IntakeCenterNote2", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_2_NOTE));
+    // registerAndNameCommand("IntakeCenterNote3", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_3_NOTE));
+    // registerAndNameCommand("IntakeCenterNote4", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_4_NOTE));
+    // registerAndNameCommand("IntakeCenterNote5", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_5_NOTE));
+    // registerAndNameCommand("IntakeRedNote1", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.RED_1_NOTE));
+    // registerAndNameCommand("IntakeRedNote2", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.RED_2_NOTE));
+    // registerAndNameCommand("IntakeRedNote3", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.RED_3_NOTE));
     // Configure the trigger bindings
     
     configureBindings();
@@ -184,14 +196,12 @@ public class RobotContainer
     Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), 1),
         () -> scaleJoystick(MathUtil.applyDeadband(-m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 1),
-        () -> scaleJoystick(-m_driverController.getRightX(), 2))
-        .alongWith(noteSimulator);
+        () -> scaleJoystick(-m_driverController.getRightX(), 2));
 
     drivebase.setDefaultCommand(
         (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
         // .alongWith(NamedCommands.getCommand("PreSpoolHelper"))
         .alongWith(NamedCommands.getCommand("VisionOdometryHelper"))
-        .alongWith(new GamePieceGuider(drivebase))
     );
     
     m_driverController.b().whileTrue(
@@ -213,6 +223,9 @@ public class RobotContainer
       .andThen(NamedCommands.getCommand("ShootNote"))
     )
     .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
+
+    m_driverController.y().onTrue(NamedCommands.getCommand("IntakeCenterNote1"));
+    m_driverController.a().onTrue(NamedCommands.getCommand("IntakeCenterNote2"));
 
     m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
     m_driverController
@@ -255,7 +268,12 @@ public class RobotContainer
     
 
 
-    intakeSubsystem.SetBeamBreakSimulator(noteSimulator.noteBeamBreakSimulation());
+    if(RobotBase.isSimulation())
+    {
+      NoteSimulator noteSimulator = new NoteSimulator(() -> drivebase.getPose(), () -> intakeSubsystem.GetSetPoint() > 0, () -> shooterSubsystem.GetIndexSetpoint() > 0);
+      intakeSubsystem.SetBeamBreakSimulator(noteSimulator.noteBeamBreakSimulation());
+      noteSimulator.schedule();
+    }
     // SmartDashboard.putNumber("IntakeSpeed", 0);
     // m_driverController.b().onTrue(intakeSubsystem.SetIntakeSpeedCommand(() -> SmartDashboard.getNumber("IntakeSpeed", 0)));
   }

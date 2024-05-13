@@ -10,6 +10,7 @@ import java.util.List;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -146,6 +147,20 @@ public final class Constants
         add(GeometryUtil.flipFieldPose(BLUE_SHOOTING_POSES.get(2)));//source side
       }
     };
+
+    public static final Pose3d BLUE_1_NOTE = new Pose3d(2.9, 4.105 + 1.45 + 1.45, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d BLUE_2_NOTE = new Pose3d(2.9, 4.105 + 1.45, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d BLUE_3_NOTE = new Pose3d(2.9, 4.105, Units.inchesToMeters(1), new Rotation3d());
+
+    public static final Pose3d CENTER_1_NOTE = new Pose3d(8.27, 4.105 + 1.68 + 1.68, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d CENTER_2_NOTE = new Pose3d(8.27, 4.105 + 1.68, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d CENTER_3_NOTE = new Pose3d(8.27, 4.105, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d CENTER_4_NOTE = new Pose3d(8.27, 4.105 - 1.68, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d CENTER_5_NOTE = new Pose3d(8.27, 4.105 - 1.68 - 1.68, Units.inchesToMeters(1), new Rotation3d());
+
+    public static final Pose3d RED_1_NOTE = new Pose3d(13.64, 4.105 + 1.45 + 1.45, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d RED_2_NOTE = new Pose3d(13.64, 4.105 + 1.45, Units.inchesToMeters(1), new Rotation3d());
+    public static final Pose3d RED_3_NOTE = new Pose3d(13.64, 4.105, Units.inchesToMeters(1), new Rotation3d());
   }
 
   public static class LEDConstants {
