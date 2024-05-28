@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -16,6 +18,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -23,6 +27,12 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.pathplanner.lib.commands.PathfindHolonomic;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import swervelib.parser.SwerveParser;
 
@@ -74,7 +84,8 @@ public class Robot extends LoggedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-
+    
+    PathFindingWarmupCommand().schedule();
     // UsbCamera camera = CameraServer.startAutomaticCapture();
     // camera.setResolution(480, 360);
     // camera.setFPS(15);
@@ -90,6 +101,19 @@ public class Robot extends LoggedRobot
     // m_led.setData(m_ledBuffer);
     // m_led.start();
 
+  }
+
+  private Command PathFindingWarmupCommand()
+  {
+     return new PathfindHolonomic(
+            new Pose2d(15.0, 4.0, Rotation2d.fromDegrees(180)),
+            new PathConstraints(4, 3, 4, 4),
+            () -> new Pose2d(1.5, 4, new Rotation2d()),
+            ChassisSpeeds::new,
+            (speeds) -> {},
+            new HolonomicPathFollowerConfig(4.5, 0.4, new ReplanningConfig()))
+        .andThen(Commands.print("[PathPlanner] PathfindingCommand finished warmup"))
+        .ignoringDisable(true);
   }
 
   /**
@@ -108,6 +132,8 @@ public class Robot extends LoggedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
+
+    m_robotContainer.getSubsystems().forEach(x -> SmartDashboard.putData(x));
     // for (var i = 0; i < m_ledBuffer.getLength(); i++) {
     //   // Sets the specified LED to the RGB values for red
     //   m_ledBuffer.setRGB(i, 255, 0, 0);

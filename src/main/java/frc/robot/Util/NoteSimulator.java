@@ -46,19 +46,19 @@ public class NoteSimulator extends Command {
 
     private List<Pose3d> noteLocations = new ArrayList<>(){
       {
-      //   add(Constants.FieldConstants.BLUE_1_NOTE);
-      //   add(Constants.FieldConstants.BLUE_2_NOTE);
-      //   add(Constants.FieldConstants.BLUE_3_NOTE);
+        add(Constants.FieldConstants.BLUE_1_NOTE);
+        add(Constants.FieldConstants.BLUE_2_NOTE);
+        add(Constants.FieldConstants.BLUE_3_NOTE);
 
         add(Constants.FieldConstants.CENTER_1_NOTE);
         add(Constants.FieldConstants.CENTER_2_NOTE);
-        // add(Constants.FieldConstants.CENTER_3_NOTE);
-        // add(Constants.FieldConstants.CENTER_4_NOTE);
-        // add(Constants.FieldConstants.CENTER_5_NOTE);
+        add(Constants.FieldConstants.CENTER_3_NOTE);
+        add(Constants.FieldConstants.CENTER_4_NOTE);
+        add(Constants.FieldConstants.CENTER_5_NOTE);
 
-        // add(Constants.FieldConstants.RED_1_NOTE);
-        // add(Constants.FieldConstants.RED_2_NOTE);
-        // add(Constants.FieldConstants.RED_3_NOTE);
+        add(Constants.FieldConstants.RED_1_NOTE);
+        add(Constants.FieldConstants.RED_2_NOTE);
+        add(Constants.FieldConstants.RED_3_NOTE);
       }
     };
 
@@ -73,7 +73,9 @@ public class NoteSimulator extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    noteInRobot = true;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -165,7 +167,5 @@ public class NoteSimulator extends Command {
   public boolean runsWhenDisabled(){
     return true;
   }
-olean isFinished() {
-    return false;
-  }
+}
 

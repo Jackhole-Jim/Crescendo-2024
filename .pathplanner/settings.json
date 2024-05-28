@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Drive Forward",
+    "New Paths",
     "Note Approach Paths",
     "Shoot And Drive Forward",
     "Shooting Approach Paths"

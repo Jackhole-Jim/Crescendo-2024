@@ -32,12 +32,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util.Util;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -75,6 +77,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
+    setName("SwerveSubsystem");
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
@@ -215,18 +218,20 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Command driveToPose(Pose2d pose)
   {
+    return new DeferredCommand(() -> {
+      PathConstraints constraints = new PathConstraints(
+          swerveDrive.getMaximumVelocity(), 4.0,
+          swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(360));
+  
+      // Since AutoBuilder is configured, we can use it to build pathfinding commands
+      return AutoBuilder.pathfindToPose(
+          pose,
+          constraints,
+          0.0, // Goal end velocity in meters/sec
+          0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+      );
+    }, Set.of());
 // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumVelocity(), 4.0,
-        swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(360));
-
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        pose,
-        constraints,
-        0.0, // Goal end velocity in meters/sec
-        0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
-    );
   }
 
   /**
@@ -576,9 +581,9 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Lock the swerve drive to prevent it from moving.
    */
-  public void lock()
+  public Command lockDriveCommand()
   {
-    swerveDrive.lockPose();
+    return runOnce(() -> swerveDrive.lockPose());
   }
 
   /**

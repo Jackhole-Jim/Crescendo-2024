@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -56,42 +57,50 @@ public class ShootNoteCommand extends SequentialCommandGroup {
           .andThen(new WaitCommand(0.1))
           .repeatedly()
         ))
-        .alongWith(shoot(robotPoseSupplier))
+        .alongWith(shoot(robotPoseSupplier, intakeSubsystem))
     );
     addCommands(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
   }
 
   
 
-  public Command shoot(Supplier<Pose2d> robotPoseSupplier) {
+  public Command shoot(Supplier<Pose2d> robotPoseSupplier, IntakeSubsystem intakeSubsystem) {
     return new ScheduleCommand( // Branch off and exit immediately
         Commands.defer(
                 () -> {
-                  final Pose3d startPose =
-                      new Pose3d(robotPoseSupplier.get()).transformBy(Constants.IntakeConstants.INDEXER_NOTE_TRANSFORM);
-                  final boolean isRed =
-                      DriverStation.getAlliance().isPresent()
-                          && DriverStation.getAlliance().get().equals(Alliance.Red);
-                  final Pose3d endPose =
-                      new Pose3d(isRed ? Constants.FieldConstants.RED_SPEAKER_GOAL : Constants.FieldConstants.BLUE_SPEAKER_GOAL, startPose.getRotation());
+                  if(intakeSubsystem.IsNotePresent())
+                  {
+                    final Pose3d startPose =
+                        new Pose3d(robotPoseSupplier.get()).transformBy(Constants.IntakeConstants.INDEXER_NOTE_TRANSFORM);
+                    final boolean isRed =
+                        DriverStation.getAlliance().isPresent()
+                            && DriverStation.getAlliance().get().equals(Alliance.Red);
+                    final Pose3d endPose =
+                        new Pose3d(isRed ? Constants.FieldConstants.RED_SPEAKER_GOAL : Constants.FieldConstants.BLUE_SPEAKER_GOAL, startPose.getRotation());
+  
+                    final double duration =
+                        startPose.getTranslation().getDistance(endPose.getTranslation()) / Constants.ShooterConstants.SHOOTER_SHOT_SPEED;
+                    final Timer timer = new Timer();
+                    timer.start();
+                    return Commands.run(
+                            () -> {
+                              Logger.recordOutput(
+                                  "Shooter/ShootingNoteVisualizer",
+                                  new Pose3d[] {
+                                    startPose.interpolate(endPose, timer.get() / duration)
+                                  });
+                            })
+                        .until(() -> timer.hasElapsed(duration))
+                        .finallyDo(
+                            () -> {
+                              Logger.recordOutput("Shooter/ShootingNoteVisualizer", new Pose3d[] {});
+                            });
 
-                  final double duration =
-                      startPose.getTranslation().getDistance(endPose.getTranslation()) / Constants.ShooterConstants.SHOOTER_SHOT_SPEED;
-                  final Timer timer = new Timer();
-                  timer.start();
-                  return Commands.run(
-                          () -> {
-                            Logger.recordOutput(
-                                "Shooter/ShootingNoteVisualizer",
-                                new Pose3d[] {
-                                  startPose.interpolate(endPose, timer.get() / duration)
-                                });
-                          })
-                      .until(() -> timer.hasElapsed(duration))
-                      .finallyDo(
-                          () -> {
-                            Logger.recordOutput("Shooter/ShootingNoteVisualizer", new Pose3d[] {});
-                          });
+                  }
+                  else
+                  {
+                    return new InstantCommand();
+                  }
                 },
                 Set.of())
             .ignoringDisable(true));

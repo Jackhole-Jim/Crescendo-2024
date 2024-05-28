@@ -81,6 +81,6 @@ public class AutoBalanceCommand extends Command
   @Override
   public void end(boolean interrupted)
   {
-    swerveSubsystem.lock();
+    // swerveSubsystem.lock();
   }
 }

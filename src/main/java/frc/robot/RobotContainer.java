@@ -22,20 +22,27 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Util.NoteSimulator;
+import frc.robot.commands.DynamicGamePieceGuider;
 import frc.robot.commands.GamePieceGuider;
+import frc.robot.commands.IntakeNoteCommand;
 import frc.robot.commands.PreSpoolShooterCommand;
 import frc.robot.commands.ShootNoteCommand;
 import frc.robot.commands.StopDriveTrainCommand;
+import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterSystem;
 import frc.robot.commands.VisionOdometryHelper;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
@@ -47,6 +54,8 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -84,7 +93,6 @@ public class RobotContainer
 
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private int intakeBlinkCounter = 0;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -92,45 +100,54 @@ public class RobotContainer
   {
     registerAndNameCommand("ShootNote", new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()));
     // registerAndNameCommand("PreSpoolShooter", shooterSubsystem.StartShooterCommand(Constants.ShooterConstants.AUTO_SPEAKER_PRE_SPOOL_SPEED_RPM));
-    registerAndNameCommand("IntakeNote", 
-      intakeSubsystem.SetIntakeSpeedCommand(
-        () -> Math.max(Constants.IntakeConstants.MINIMUM_DRIVETRAIN_INTAKE_SPEED_METERS_PER_SECOND, drivebase.getRobotVelocity().vxMetersPerSecond) * 3//make it so our intake runs at 3x the surface speed of the robot in the forward direction
-      )
-      .onlyWhile(() -> !intakeSubsystem.IsNotePresent())
-      .andThen(intakeSubsystem.StopIntakeCommand())
-      .andThen(new InstantCommand(() -> intakeBlinkCounter = 0))
-      .andThen(new InstantCommand(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1)))
-      .andThen(
-        ledSubsystem.setPercentageLitCommand(1, Color.kOrange)
-        .andThen(new WaitCommand(0.1))
-        .andThen(ledSubsystem.setPercentageLitCommand(0, Color.kOrange))
-        .andThen(new WaitCommand(0.1))
-        .andThen(new InstantCommand(() -> intakeBlinkCounter++))
-        .repeatedly()
-        .until(() -> intakeBlinkCounter >= 4)
-      )
-      .andThen(ledSubsystem.setPercentageLitCommand(1, Color.kOrange))
-      .andThen(new InstantCommand(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
-    );
-    registerAndNameCommand("StopIntake", 
-      intakeSubsystem.StopIntakeCommand()
-      .andThen(new InstantCommand(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0)))
-    );
+    registerAndNameCommand("IntakeNote", new IntakeNoteCommand(intakeSubsystem, ledSubsystem, drivebase, m_driverController));
+    registerAndNameCommand("StopIntake", new StopIntakeCommand(intakeSubsystem, m_driverController));
     registerAndNameCommand("StopDrivetrain", new StopDriveTrainCommand(drivebase));
+    registerAndNameCommand("LockDrivetrain", drivebase.lockDriveCommand());
     registerAndNameCommand("PreSpoolHelper", new PreSpoolShooterCommand(drivebase, intakeSubsystem, shooterSubsystem));
     registerAndNameCommand("VisionOdometryHelper", new VisionOdometryHelper(drivebase));
 
-    // registerAndNameCommand("IntakeBlueNote1", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.BLUE_1_NOTE));
-    // registerAndNameCommand("IntakeBlueNote2", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.BLUE_2_NOTE));
-    // registerAndNameCommand("IntakeBlueNote3", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.BLUE_3_NOTE));
-    registerAndNameCommand("IntakeCenterNote1", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_1_NOTE));
-    registerAndNameCommand("IntakeCenterNote2", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_2_NOTE));
-    // registerAndNameCommand("IntakeCenterNote3", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_3_NOTE));
-    // registerAndNameCommand("IntakeCenterNote4", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_4_NOTE));
-    // registerAndNameCommand("IntakeCenterNote5", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.CENTER_5_NOTE));
-    // registerAndNameCommand("IntakeRedNote1", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.RED_1_NOTE));
-    // registerAndNameCommand("IntakeRedNote2", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.RED_2_NOTE));
-    // registerAndNameCommand("IntakeRedNote3", new GamePieceGuider(drivebase, NamedCommands.getCommand("IntakeNote"), NamedCommands.getCommand("StopIntake"), gamePieceVisionSubsystem, Constants.FieldConstants.RED_3_NOTE));
+    registerAndNameCommand("IntakeAmpNote", new DeferredCommand(() -> new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_1_NOTE : Constants.FieldConstants.RED_1_NOTE)), Set.of(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem)));
+    registerAndNameCommand("IntakeSpeakerNote", new DeferredCommand(() -> new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_2_NOTE : Constants.FieldConstants.RED_2_NOTE)), Set.of(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem)));
+    registerAndNameCommand("IntakeSourceNote", new DeferredCommand(() -> new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_3_NOTE : Constants.FieldConstants.RED_3_NOTE)), Set.of(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem)));
+    registerAndNameCommand("IntakeCenterNote1", new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, Constants.FieldConstants.CENTER_1_NOTE));
+    registerAndNameCommand("IntakeCenterNote2", new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, Constants.FieldConstants.CENTER_2_NOTE));
+    registerAndNameCommand("IntakeCenterNote3", new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, Constants.FieldConstants.CENTER_3_NOTE));
+    registerAndNameCommand("IntakeCenterNote4", new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, Constants.FieldConstants.CENTER_4_NOTE));
+    registerAndNameCommand("IntakeCenterNote5", new GamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController, Constants.FieldConstants.CENTER_5_NOTE));
+    
+    registerAndNameCommand("DriveToPoseTest", drivebase.driveToPose(Constants.FieldConstants.CENTER_1_NOTE.toPose2d()));
+
+    registerAndNameCommand("ShootNoteAmp", 
+      new DeferredCommand(
+        () -> { 
+          return drivebase.driveToPose((DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES).get(0)).asProxy()
+          .andThen(drivebase.lockDriveCommand())
+          .andThen(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()));
+        }, Set.of(drivebase, shooterSubsystem, ledSubsystem, intakeSubsystem)
+      )
+    );
+    
+    registerAndNameCommand("ShootNoteCenter", 
+      new DeferredCommand(
+        () -> drivebase.driveToPose((DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES).get(1))
+          .andThen(drivebase.lockDriveCommand())
+          .andThen(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()))
+        , Set.of(drivebase, shooterSubsystem, intakeSubsystem, ledSubsystem)
+      )
+    );
+
+    registerAndNameCommand("ShootNoteSource", 
+      new DeferredCommand(
+        () -> drivebase.driveToPose((DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES).get(2))
+          .andThen(drivebase.lockDriveCommand())
+          .andThen(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()))
+        , Set.of(drivebase, shooterSubsystem, intakeSubsystem, ledSubsystem)
+      )
+    );
+
+    registerAndNameCommand("RunUntilNote", new WaitUntilCommand(() -> intakeSubsystem.IsNotePresent()));
+
     // Configure the trigger bindings
     
     configureBindings();
@@ -174,7 +191,13 @@ public class RobotContainer
   public void registerAndNameCommand(String name, Command command)
   {
     NamedCommands.registerCommand(name, command);
-    NamedCommands.getCommand(name).setName(name);
+    nameCommand(name, NamedCommands.getCommand(name));
+  }
+
+  public Command nameCommand(String name, Command command)
+  {
+    command.setName(name);
+    return command;
   }
 
   /**
@@ -199,45 +222,51 @@ public class RobotContainer
         () -> scaleJoystick(-m_driverController.getRightX(), 2));
 
     drivebase.setDefaultCommand(
-        (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
+        nameCommand("DriveWithController", (!RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim)
         // .alongWith(NamedCommands.getCommand("PreSpoolHelper"))
-        .alongWith(NamedCommands.getCommand("VisionOdometryHelper"))
+        .alongWith(new VisionOdometryHelper(drivebase)))
     );
     
-    m_driverController.b().whileTrue(
-      new ExecuteTimeCommand( () ->
-        drivebase.driveToPose(
-          (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES)
-          .stream()
-          .map((pose) -> new Pair<>(pose, drivebase.getPose()))
-          .min((posePair1, posePair2) -> { 
-            return (int)((posePair1.getFirst().getTranslation().getDistance(posePair1.getSecond().getTranslation())
-                    - posePair2.getFirst().getTranslation().getDistance(posePair2.getSecond().getTranslation()))
-                    * 1000); 
-          })
-          .map((posePair) -> posePair.getFirst())
-          .get()
-          // Constants.FieldConstants.BLUE_SHOOTING_POSES.get(0)
+    m_driverController
+      .b()
+      .and(() -> intakeSubsystem.IsNotePresent())
+      .whileTrue(
+        new DeferredCommand(() ->
+          drivebase.driveToPose(
+            (DriverStation.getAlliance().get() == Alliance.Blue ? Constants.FieldConstants.BLUE_SHOOTING_POSES : Constants.FieldConstants.RED_SHOOTING_POSES)
+            .stream()
+            .map((pose) -> new Pair<>(pose, drivebase.getPose()))
+            .min((posePair1, posePair2) -> { 
+              return (int)((posePair1.getFirst().getTranslation().getDistance(posePair1.getSecond().getTranslation())
+                      - posePair2.getFirst().getTranslation().getDistance(posePair2.getSecond().getTranslation()))
+                      * 1000); 
+            })
+            .map((posePair) -> posePair.getFirst())
+            .get()
+            // Constants.FieldConstants.BLUE_SHOOTING_POSES.get(0)
+          ), Set.of(drivebase)
         )
-      )
-      .andThen(NamedCommands.getCommand("ShootNote"))
+        .andThen(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()))
     )
     .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
 
-    m_driverController.y().onTrue(NamedCommands.getCommand("IntakeCenterNote1"));
-    m_driverController.a().onTrue(NamedCommands.getCommand("IntakeCenterNote2"));
+    m_driverController
+      .x()
+      // .and(() -> !intakeSubsystem.IsNotePresent())
+      .whileTrue(new DynamicGamePieceGuider(drivebase, intakeSubsystem, ledSubsystem, gamePieceVisionSubsystem, m_driverController))
+      .onFalse(new StopIntakeCommand(intakeSubsystem, m_driverController));      
 
-    m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
     m_driverController
       .leftBumper()
       // .and(() -> !intakeSubsystem.IsNotePresent())
-      .onTrue(NamedCommands.getCommand("IntakeNote"))
-      .onFalse(NamedCommands.getCommand("StopIntake"));
+      .onTrue(new IntakeNoteCommand(intakeSubsystem, ledSubsystem, drivebase, m_driverController))
+      .onFalse(new StopIntakeCommand(intakeSubsystem, m_driverController));
     m_driverController
       .rightBumper()
-      .whileTrue(NamedCommands.getCommand("ShootNote"))
+      .whileTrue(new ShootNoteCommand(shooterSubsystem, intakeSubsystem, ledSubsystem, Constants.ShooterConstants.SPEAKER_SHOOTING_SPEED_RPM, () -> drivebase.getPose()))
       .onFalse(new StopShooterSystem(shooterSubsystem, intakeSubsystem, ledSubsystem));
       
+    m_driverController.rightStick().onTrue(new InstantCommand(drivebase::zeroGyro));
     climberSubsystem.setDefaultCommand(climberSubsystem.setClimberSpeed(
       () -> m_driverController.getLeftTriggerAxis() - m_driverController.getRightTriggerAxis()
     ));
@@ -291,7 +320,12 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return autoChooser.get();//.alongWith(NamedCommands.getCommand("PreSpoolHelper"));
+    return autoChooser.get()
+    // .handleInterrupt(() -> {
+    //     System.out.println("Auto command interrupted");
+    //   }
+    // )
+    ;//.alongWith(NamedCommands.getCommand("PreSpoolHelper"));
   }
 
   public void setDriveMode()
@@ -302,5 +336,9 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public List<SubsystemBase> getSubsystems(){
+    return List.of(drivebase, shooterSubsystem, intakeSubsystem, ampWhipperSubsystem, ledSubsystem, gamePieceVisionSubsystem);
   }
 }

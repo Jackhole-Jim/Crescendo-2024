@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.689599937758434,
+      "y": 6.674675691693726
+    },
+    "rotation": 60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToPoseTest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NEW Approach Center 1 2 From Amp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteAmp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NEW Approach Center 1 2 From Amp"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -2503,7 +2503,7 @@ private final List<Pose3d> mGamePieceEstimatedPoses = new ArrayList<>();
                 new Transform3d(
                   new Translation3d(yawCompensatedDist, new Rotation3d(0, -Math.toRadians(y.getPitch()), -Math.toRadians(y.getYaw()))), 
                   new Rotation3d()
-                  )
+                )
               );
           estimatedPose3d = new Pose3d(estimatedPose3d.getX(), estimatedPose3d.getY(), Units.inchesToMeters(1), new Rotation3d());
           mGamePieceEstimatedPoses.add(estimatedPose3d);     
@@ -2532,7 +2532,7 @@ private final List<Pose3d> mGamePieceEstimatedPoses = new ArrayList<>();
 
   public List<Pose3d> getEstimatedGamePieceLocations()
   {
-    mGamePieceEstimatedPoses.removeIf(x -> x == new Pose3d());//remove the detections that are outside of our interpolation table
+    mGamePieceEstimatedPoses.removeIf(x -> x.equals(new Pose3d()));//remove the detections that are outside of our interpolation table
     return mGamePieceEstimatedPoses;
   }
 }
